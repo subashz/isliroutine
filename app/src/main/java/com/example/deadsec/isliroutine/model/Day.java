@@ -6,30 +6,11 @@ import java.util.Calendar;
  * Created by deadsec on 10/31/17.
  */
 
-public enum Day {
-    SUNDAY(Calendar.SUNDAY),
-    MONDAY(Calendar.MONDAY),
-    TUESDAY(Calendar.TUESDAY),
-    WEDNESDAY(Calendar.WEDNESDAY),
-    THURSDAY(Calendar.THURSDAY),
-    FRIDAY(Calendar.FRIDAY);
-
-    private final int value;
-
-    Day(int value) {
-        this.value=value;
-    }
-
-    public static Day getByValue(final int value) {
-        for(final Day day: Day.values()) {
-            if(day.value == value) {
-                return day;
-            }
-        }
-        return null;
-    }
-
-    public final int getValue() {
-        return value;
-    }
+public class Day {
+    public static final String SUNDAY = "1";
+    public static final String MONDAY = "2";
+    public static final String TUESDAY = "3";
+    public static final String WEDNESDAY = "4";
+    public static final String THURSDAY = "5";
+    public static final String FRIDAY = "6";
 }

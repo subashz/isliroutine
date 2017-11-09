@@ -24,7 +24,6 @@ public class CustomCursorWrapper extends CursorWrapper {
         int id = getInt(getColumnIndex(DbSchema.YearGroup.Cols.ID));
         String mCreatedAt = getString(getColumnIndex(DbSchema.YearGroup.Cols.CREATED_AT));
         String mUpdatedAt = getString(getColumnIndex(DbSchema.YearGroup.Cols.UPDATED_AT));
-
         int mEndDay = getInt(getColumnIndex(DbSchema.YearGroup.Cols.END_DAY));
         int mStartDay = getInt(getColumnIndex(DbSchema.YearGroup.Cols.START_DAY));
         int mEndYear = getInt(getColumnIndex(DbSchema.YearGroup.Cols.END_YEAR));

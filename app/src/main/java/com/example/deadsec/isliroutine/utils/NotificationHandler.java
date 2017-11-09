@@ -17,6 +17,7 @@ import com.example.deadsec.isliroutine.R;
 public class NotificationHandler {
 
     public static final String TAG=NotificationHandler.class.getSimpleName();
+
     public static void scheduleNotification(Context context, String content, int delay) {
         Notification notification = getNotification(context,content);
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);

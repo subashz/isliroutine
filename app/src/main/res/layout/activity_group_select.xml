@@ -24,9 +24,11 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
+        android:fontFamily="@font/lato"
         android:text="Select Group"
         app:layout_constraintBottom_toTopOf="@+id/group_select_spn"
-        app:layout_constraintStart_toStartOf="@+id/group_select_spn" />
+        app:layout_constraintStart_toStartOf="@+id/group_select_spn"
+        android:layout_marginLeft="8dp" />
 
     <Button
         android:id="@+id/show_routine_btn"
@@ -35,6 +37,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:fontFamily="@font/lato"
         android:text="Show My Routine"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

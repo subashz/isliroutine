@@ -2,6 +2,8 @@ package com.example.deadsec.isliroutine.database;
 
 /**
  * Created by deadsec on 11/8/17.
+ * Database schema of different tables
+ * and their column properties
  */
 
 

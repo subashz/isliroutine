@@ -1,5 +1,6 @@
 package com.example.deadsec.isliroutine.fragment;
 
+import android.app.ProgressDialog;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -20,24 +21,20 @@ import com.framgia.library.calendardayview.data.IEvent;
 
 import java.util.List;
 
-
 public class DailyClassFragment extends Fragment {
     public static final String ARG_DAY = "daily_class_day";
     public static final String GROUP_INDEX = "group_index";
     private int dayId;
-    private Day day;
+    private String day;
     private int groupIndex;
-
-
     CalendarDayView dayView;
+    ProgressDialog progressDoalog;
 
-    public static final DailyClassFragment newInstance(Day day,int groupId) {
+    public static final DailyClassFragment newInstance(String day,int groupId) {
         final DailyClassFragment instance = new DailyClassFragment();
         final Bundle args = new Bundle();
-        args.putInt(ARG_DAY, day.getValue());
+        args.putString(ARG_DAY, day);
         args.putInt(GROUP_INDEX,groupId);
-        Log.d("day.name():",day.getValue()+"");
-
         instance.setArguments(args);
         return instance;
     }
@@ -51,9 +48,15 @@ public class DailyClassFragment extends Fragment {
         super.onCreate(savedInstanceState);
         final Bundle args = this.getArguments();
         if (args != null) {
-            day = Day.getByValue(args.getInt(ARG_DAY));
+            day = args.getString(ARG_DAY);
             groupIndex=args.getInt(GROUP_INDEX);
         }
+        progressDoalog = new ProgressDialog(getActivity());
+        progressDoalog.setMax(100);
+        progressDoalog.setMessage("This usually takes less than a second ");
+        progressDoalog.setTitle("Downloading Classes");
+        progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDoalog.show();
 
     }
 
@@ -78,16 +81,16 @@ public class DailyClassFragment extends Fragment {
                         Log.e("TAG", "onEventViewClick:" + data.getName());
                         if (data instanceof ClassModel) {
                             // change event (ex: set event color)
-                            dayView.setEvents(ClassDataLab.getEvents(getActivity(), day));
+                            dayView.setEvents(ClassDataLab.get(getActivity()).getEvents(day));
                         }
                     }
                 });
 
 
-        List<IEvent> eventList = ClassDataLab.getEvents(getActivity(),day);
+        List<IEvent> eventList = ClassDataLab.get(getActivity()).getEvents(day);
         dayView.setEvents(eventList);
+        progressDoalog.dismiss();
         dayView.setLimitTime(eventList.get(0).getStartTime().getTime().getHours()-1, eventList.get(eventList.size()-1).getEndTime().getTime().getHours()+1);
-        //dayView.setLimitTime(6,13);
         return view;
     }
 }

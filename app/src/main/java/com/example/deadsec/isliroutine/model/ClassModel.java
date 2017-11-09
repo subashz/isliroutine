@@ -1,8 +1,14 @@
 package com.example.deadsec.isliroutine.model;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
+
+import com.example.deadsec.isliroutine.R;
 import com.framgia.library.calendardayview.data.IEvent;
 
 import java.util.Calendar;
+import java.util.Random;
 
 /**
  * Created by deadsec on 10/30/17.
@@ -17,13 +23,18 @@ public class ClassModel implements IEvent {
     private String mLocation;
     private String mTeacherName;
     private String mModuleid;
+    private String mType;
     private int mColor;
+
+    public String getType() {
+        return mType;
+    }
 
     public ClassModel() {
 
     }
 
-    public ClassModel(long id, Calendar startTime, Calendar endTime, String courseName, String location, String teacherName, String moduleid, int color) {
+    public ClassModel(long id, Calendar startTime, Calendar endTime, String courseName, String location, String teacherName, String moduleid, int color,String type) {
         mId = id;
         mStartTime = startTime;
         mEndTime = endTime;
@@ -32,7 +43,23 @@ public class ClassModel implements IEvent {
         mTeacherName = teacherName;
         mModuleid = moduleid;
         mColor = color;
+        mType=type;
     }
+
+    public static ClassModel getClassModel(Context context, int id, int startHour, int startMinute, int stopHour, int stopMinute, String module, String location, String teacher, String mId,String type) {
+        int eventColor = ContextCompat.getColor(context, R.color.eventColor1);
+        //Random rand = new Random();
+        //int color = Color.argb(255, rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+        int color = Color.argb(20,62,64,149);
+        Calendar timeStart = Calendar.getInstance();
+        timeStart.set(Calendar.HOUR_OF_DAY, startHour);
+        timeStart.set(Calendar.MINUTE, startMinute);
+        Calendar timeEnd = (Calendar) timeStart.clone();
+        timeEnd.set(Calendar.HOUR_OF_DAY, stopHour);
+        timeEnd.set(Calendar.MINUTE, stopMinute);
+        return new ClassModel(id, timeStart, timeEnd, module, location, teacher, mId, color,type);
+    }
+
 
     public String getCourseName() {
         return mCourseName;

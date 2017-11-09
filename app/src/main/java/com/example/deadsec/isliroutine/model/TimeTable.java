@@ -14,6 +14,7 @@ public class TimeTable {
     @SerializedName("lession_id")
     private int mLessionId;
 
+    @SerializedName("teacher_id")
     private int mTeacherId;
 
     @SerializedName("course_id")

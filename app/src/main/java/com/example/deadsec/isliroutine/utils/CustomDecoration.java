@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -44,6 +45,7 @@ public class CustomDecoration extends CdvDecorationDefault {
         TextView teacherName = (TextView) view.findViewById(R.id.tv_class_teacher_name);
         TextView location = (TextView) view.findViewById(R.id.tv_class_location);
         TextView time = (TextView) view.findViewById(R.id.tv_class_time);
+        ImageView lessionType=(ImageView)view.findViewById(R.id.iv_lession_type);
 
         ClassModel classModel = (ClassModel) event;
         className.setText(classModel.getCourseName());
@@ -54,6 +56,18 @@ public class CustomDecoration extends CdvDecorationDefault {
                 classModel.getStartTime().getTime().getMinutes(),
                 classModel.getEndTime().getTime().getHours(),
                 classModel.getEndTime().getTime().getMinutes()));
+
+        switch(classModel.getType()) {
+            case "Lecture":
+                lessionType.setImageResource(R.drawable.ic_lecture2);
+                break;
+            case "Lab":
+                lessionType.setImageResource(R.drawable.ic_tutorial2);
+                break;
+            case "Tutorial":
+                lessionType.setImageResource(R.drawable.ic_lab);
+                break;
+        }
 
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 

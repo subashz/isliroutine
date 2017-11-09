@@ -34,6 +34,7 @@ public class PreferenceUtils {
     public void setGroupYearInitialized(boolean status) {
         mPreferences.edit().putBoolean(GROUP_YEAR_INITIALIZED,status).commit();
     }
+
     public boolean getGroupYearInitialized() {
         return mPreferences.getBoolean(GROUP_YEAR_INITIALIZED,false);
     }
@@ -41,6 +42,7 @@ public class PreferenceUtils {
     public void setTimeTableInitialized(boolean status) {
         mPreferences.edit().putBoolean(TIME_TABLE_INITIALIZED,status).commit();
     }
+
     public boolean getTimeTableInitialized() {
         return mPreferences.getBoolean(TIME_TABLE_INITIALIZED,false);
     }

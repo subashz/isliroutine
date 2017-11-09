@@ -1,21 +1,35 @@
 package com.example.deadsec.isliroutine.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by deadsec on 11/8/17.
  */
 
 public class Teacher {
+    @SerializedName("id")
     private int mId;
+    @SerializedName("first_name")
     private String mFirstName;
+    @SerializedName("last_name")
     private String mLastName;
+    @SerializedName("office_hour")
     private String mOfficeHour;
+    @SerializedName("phone")
     private String mPhone;
+    @SerializedName("email")
     private String mEmail;
+    @SerializedName("website")
     private String mWebsite;
+    @SerializedName("qualification")
     private String mQualification;
+    @SerializedName("experience")
     private String mExperience;
+    @SerializedName("misc")
     private String mMisc;
+    @SerializedName("updated_at")
     private String mupdatedAt;
+    @SerializedName("created_at")
     private String mCreatedAt;
 
     public Teacher(int id, String firstName, String lastName, String officeHour, String phone, String email, String website, String qualification, String experience, String misc, String mupdatedAt, String createdAt) {

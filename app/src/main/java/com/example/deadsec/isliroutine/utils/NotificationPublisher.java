@@ -12,7 +12,9 @@ import android.util.Log;
  */
 
 public class NotificationPublisher extends BroadcastReceiver {
+
     public static String NOTIFICATION_ID = "notification-id";
+
     public static final String NOTIFICATION = "notification";
 
     @Override
