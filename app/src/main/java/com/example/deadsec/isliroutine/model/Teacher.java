@@ -9,10 +9,8 @@ import com.google.gson.annotations.SerializedName;
 public class Teacher {
     @SerializedName("id")
     private int mId;
-    @SerializedName("first_name")
-    private String mFirstName;
-    @SerializedName("last_name")
-    private String mLastName;
+    @SerializedName("name")
+    private String mName;
     @SerializedName("office_hour")
     private String mOfficeHour;
     @SerializedName("phone")
@@ -32,10 +30,9 @@ public class Teacher {
     @SerializedName("created_at")
     private String mCreatedAt;
 
-    public Teacher(int id, String firstName, String lastName, String officeHour, String phone, String email, String website, String qualification, String experience, String misc, String mupdatedAt, String createdAt) {
+    public Teacher(int id, String name, String officeHour, String phone, String email, String website, String qualification, String experience, String misc, String mupdatedAt, String createdAt) {
         mId = id;
-        mFirstName = firstName;
-        mLastName = lastName;
+        mName = name;
         mOfficeHour = officeHour;
         mPhone = phone;
         mEmail = email;
@@ -51,13 +48,10 @@ public class Teacher {
         return mId;
     }
 
-    public String getFirstName() {
-        return mFirstName;
+    public String getName() {
+        return mName;
     }
 
-    public String getLastName() {
-        return mLastName;
-    }
 
     public String getOfficeHour() {
         return mOfficeHour;

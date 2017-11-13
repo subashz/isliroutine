@@ -57,8 +57,7 @@ public class CustomCursorWrapper extends CursorWrapper {
         int id = getInt(getColumnIndex(DbSchema.Teacher.Cols.ID));
         String mCreatedAt = getString(getColumnIndex(DbSchema.Teacher.Cols.CREATED_AT));
         String mUpdatedAt = getString(getColumnIndex(DbSchema.Teacher.Cols.UPDATED_AT));
-        String mFirstName = getString(getColumnIndex(DbSchema.Teacher.Cols.FIRST_NAME));
-        String mLastName = getString(getColumnIndex(DbSchema.Teacher.Cols.LAST_NAME));
+        String mName = getString(getColumnIndex(DbSchema.Teacher.Cols.NAME));
         String mEmail = getString(getColumnIndex(DbSchema.Teacher.Cols.EMAIL));
         String mExperience = getString(getColumnIndex(DbSchema.Teacher.Cols.EXPERIENCE));
         String mOfficeHour = getString(getColumnIndex(DbSchema.Teacher.Cols.OFFICE_HOUR));
@@ -66,7 +65,7 @@ public class CustomCursorWrapper extends CursorWrapper {
         String mQualification = getString(getColumnIndex(DbSchema.Teacher.Cols.QUALIFICATION));
         String mMisc = getString(getColumnIndex(DbSchema.Teacher.Cols.MISC));
         String mWebsite = getString(getColumnIndex(DbSchema.Teacher.Cols.WEBSITE));
-        return new Teacher(id, mFirstName, mLastName, mOfficeHour, mPhone, mEmail, mWebsite, mQualification, mExperience, mMisc, mUpdatedAt, mCreatedAt);
+        return new Teacher(id, mName, mOfficeHour, mPhone, mEmail, mWebsite, mQualification, mExperience, mMisc, mUpdatedAt, mCreatedAt);
     }
 
     public TimeTable getTimeTable() {

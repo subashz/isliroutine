@@ -53,7 +53,7 @@ public class ClassDataLab {
     }
 
     public List<YearGroup> getYearGroups() {
-        return DbHelper.getYearGroup(mDatabase);
+        return DbHelper.getYearGroup(mDatabase,null);
     }
 
     public void addToTimeTable(TimeTable timeTable) {
@@ -86,8 +86,9 @@ public class ClassDataLab {
         DbHelper.addToCourse(mDatabase,course);
     }
 
+    public String getGroupName(String uid) { return DbHelper.getYearGroup(mDatabase,uid).get(0).getGroup(); }
+
     public List<IEvent> getEvents(String day) {
-        List<IEvent> events = new ArrayList<>();
         return DbHelper.getEvents(mContext,mDatabase,day);
     }
 

@@ -1,6 +1,8 @@
 package com.example.deadsec.isliroutine.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,8 +15,10 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.deadsec.isliroutine.loader.ClassDataLab;
 import com.example.deadsec.isliroutine.model.Course;
@@ -29,6 +33,7 @@ import com.example.deadsec.isliroutine.R;
 import com.example.deadsec.isliroutine.fragment.DailyClassFragment;
 import com.example.deadsec.isliroutine.model.Day;
 import com.example.deadsec.isliroutine.utils.PreferenceUtils;
+import com.example.deadsec.isliroutine.utils.SilentService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,7 +54,9 @@ public class RoutineActivity extends AppCompatActivity {
     private TextView toolbarTitle;
     private ViewPager mViewPager;
     private int dissmissCounter=0;
+    private int dissmissMax=0;
     private int groupIndex;
+    private boolean doubleBackPressStatus = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,17 +65,18 @@ public class RoutineActivity extends AppCompatActivity {
 
 
         progressDoalog = new ProgressDialog(RoutineActivity.this);
+        progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDoalog.setMax(100);
         groupIndex = getIntent().getIntExtra("GROUPINDEX", 0);
         if (groupIndex == 0) {
             groupIndex = PreferenceUtils.get(this).getGroupYear();
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         if (PreferenceUtils.get(this).getTimeTableInitialized() != true) {
-            progressDoalog.setMax(100);
             progressDoalog.setMessage("This usually takes less than a second ");
             progressDoalog.setTitle("Downloading Classes");
-            progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDoalog.show();
             loadTimeTable(groupIndex);
         } else {
@@ -84,13 +92,16 @@ public class RoutineActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         toolbarTitle=(TextView)findViewById(R.id.toolbar_title);
-        String coloredText = "<font color=#ed3237>Isli</font> <font color=#3e4095>Routine</font>";
+        String groupName =ClassDataLab.get(this).getGroupName(String.valueOf(PreferenceUtils.get(this).getGroupYear())).toLowerCase();
+        String coloredText = "<font color=#ed3237>Isli</font> <font color=#3e4095>Routine</font>  <font color=#3e4095>"+groupName+"</font>" ;
         toolbarTitle.setText(Html.fromHtml(coloredText));
 
-        NotificationHandler.scheduleNotification(this, "Notification 1 after 5 second delay", 5000);
+        //NotificationHandler.scheduleNotification(this,  5000);
+        startService(new Intent(this, SilentService.class));
 
         //mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         //tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
         mViewPager.setOffscreenPageLimit(7);
         setupViewPager(mViewPager);
         tabLayout.setupWithViewPager(mViewPager);
@@ -101,12 +112,12 @@ public class RoutineActivity extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.SUNDAY, groupIndex), "Sun");
-        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.MONDAY, groupIndex), "Mon");
-        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.TUESDAY, groupIndex), "Tue");
-        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.WEDNESDAY, groupIndex), "Wed");
-        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.THURSDAY, groupIndex), "Thu");
-        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.FRIDAY, groupIndex), "Fri");
+        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.SUNDAY), "Sun");
+        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.MONDAY), "Mon");
+        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.TUESDAY), "Tue");
+        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.WEDNESDAY), "Wed");
+        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.THURSDAY), "Thu");
+        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.FRIDAY), "Fri");
         viewPager.setAdapter(mSectionsPagerAdapter);
     }
 
@@ -127,7 +138,7 @@ public class RoutineActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            startActivity(new Intent(this,SettingsActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
@@ -174,6 +185,8 @@ public class RoutineActivity extends AppCompatActivity {
             public void onResponse(Call<List<TimeTable>> call, Response<List<TimeTable>> response) {
                 List<TimeTable> timeTables = response.body();
                 Log.d("response is: ", response.toString());
+                dissmissMax=(timeTables.size()*4)+1;
+
                 for (TimeTable timeTable : timeTables) {
                     ClassDataLab.get(RoutineActivity.this).addToTimeTable(timeTable);
                     loadTeacherTable(timeTable.getTeacherId());
@@ -286,10 +299,32 @@ public class RoutineActivity extends AppCompatActivity {
 
     public void dissmissCounter() {
         dissmissCounter++;
-        if(dissmissCounter==5) {
+        if(dissmissCounter==dissmissMax) {
             progressDoalog.dismiss();
             init();
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if(doubleBackPressStatus) {
+            finish();
+            super.onBackPressed();
+        }
+        doubleBackPressStatus=true;
+        Toast.makeText(this,"Please click back again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doubleBackPressStatus=false;
+            }
+        },2000);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 }

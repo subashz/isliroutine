@@ -61,8 +61,7 @@ public class DbHelper {
         values.put(DbSchema.Teacher.Cols.UPDATED_AT, teacher.getUpdatedAt());
         values.put(DbSchema.Teacher.Cols.EMAIL, teacher.getEmail());
         values.put(DbSchema.Teacher.Cols.EXPERIENCE, teacher.getExperience());
-        values.put(DbSchema.Teacher.Cols.FIRST_NAME, teacher.getFirstName());
-        values.put(DbSchema.Teacher.Cols.LAST_NAME, teacher.getLastName());
+        values.put(DbSchema.Teacher.Cols.NAME, teacher.getName());
         values.put(DbSchema.Teacher.Cols.MISC, teacher.getMisc());
         values.put(DbSchema.Teacher.Cols.OFFICE_HOUR, teacher.getOfficeHour());
         values.put(DbSchema.Teacher.Cols.PHONE, teacher.getPhone());
@@ -185,9 +184,14 @@ public class DbHelper {
         return timeTables;
     }
 
-    public static List<YearGroup> getYearGroup(SQLiteDatabase db) {
+    public static List<YearGroup> getYearGroup(SQLiteDatabase db,String uid) {
         List<YearGroup> yearGroups = new ArrayList<>();
-        CustomCursorWrapper cursor = getCustomCursor(db, DbSchema.YearGroup.NAME, null, null);
+        CustomCursorWrapper cursor;
+        if(uid==null) {
+            cursor= getCustomCursor(db, DbSchema.YearGroup.NAME,null , null);
+        }else {
+             cursor= getCustomCursor(db, DbSchema.YearGroup.NAME, "uid="+uid, null);
+        }
         try {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -213,8 +217,7 @@ public class DbHelper {
                 "ti.start_minute, " +
                 "ti.end_minute, " +
                 "le.type, " +
-                "te.first_name, " +
-                "te.last_name, " +
+                "te.name, " +
                 "ro.block, " +
                 "ro.class_room, " +
                 "co.title, " +
@@ -236,14 +239,13 @@ public class DbHelper {
                 int start_minute = cursor.getInt(cursor.getColumnIndex("start_minute"));
                 int end_minute = cursor.getInt(cursor.getColumnIndex("end_minute"));
                 String type = cursor.getString(cursor.getColumnIndex("type"));
-                String first_name = cursor.getString(cursor.getColumnIndex("first_name"));
-                String last_name = cursor.getString(cursor.getColumnIndex("last_name"));
+                String name = cursor.getString(cursor.getColumnIndex("name"));
                 String block = cursor.getString(cursor.getColumnIndex("block"));
                 String class_room = cursor.getString(cursor.getColumnIndex("class_room"));
                 String title = cursor.getString(cursor.getColumnIndex("title"));
                 String module_id = cursor.getString(cursor.getColumnIndex("module_id"));
                 Log.d("Type", type);
-                events.add(ClassModel.getClassModel(context, uuid, start_hour, start_minute, end_hour, end_minute, title, block + " " + class_room, first_name + " " + last_name, module_id,type));
+                events.add(ClassModel.getClassModel(context, uuid, start_hour, start_minute, end_hour, end_minute, title, block + " " + class_room, name, module_id,type));
             }
         } catch (Exception e) {
             Log.d("Exception", "occured",e);

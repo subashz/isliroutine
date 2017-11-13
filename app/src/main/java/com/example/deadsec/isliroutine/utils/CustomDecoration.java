@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.deadsec.isliroutine.R;
 import com.example.deadsec.isliroutine.model.ClassModel;
+import com.framgia.library.calendardayview.DayView;
 import com.framgia.library.calendardayview.EventView;
 import com.framgia.library.calendardayview.data.IEvent;
 import com.framgia.library.calendardayview.decoration.CdvDecorationDefault;
@@ -74,5 +75,10 @@ public class CustomDecoration extends CdvDecorationDefault {
         linearLayout.addView(view);
 
         return eventView;
+    }
+
+    @Override
+    public DayView getDayView(int hour) {
+        return super.getDayView(hour);
     }
 }

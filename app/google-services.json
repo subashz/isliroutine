@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "227213556775",
+    "firebase_url": "https://isliroutine.firebaseio.com",
+    "project_id": "isliroutine",
+    "storage_bucket": "isliroutine.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227213556775:android:f4ac5b3db057d015",
+        "android_client_info": {
+          "package_name": "com.example.deadsec.isliroutine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "227213556775-s1mvpcor5nbsgdeakcm0a78vurktg0ac.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.deadsec.isliroutine",
+            "certificate_hash": "c6ce99c187daaf13137ebb17eadab005f13020bc"
+          }
+        },
+        {
+          "client_id": "227213556775-4vt96e97cgqjfsfkcnl6qjt5fie3rq53.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWxGBr8cI7Io3P_CofoLNkc4HVH9gdwyg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "227213556775-4vt96e97cgqjfsfkcnl6qjt5fie3rq53.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

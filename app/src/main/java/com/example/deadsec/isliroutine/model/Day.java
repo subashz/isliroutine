@@ -7,10 +7,10 @@ import java.util.Calendar;
  */
 
 public class Day {
-    public static final String SUNDAY = "1";
-    public static final String MONDAY = "2";
-    public static final String TUESDAY = "3";
-    public static final String WEDNESDAY = "4";
-    public static final String THURSDAY = "5";
-    public static final String FRIDAY = "6";
+    public static final String SUNDAY = "SUN";
+    public static final String MONDAY = "MON";
+    public static final String TUESDAY = "TUE";
+    public static final String WEDNESDAY = "WED";
+    public static final String THURSDAY = "THU";
+    public static final String FRIDAY = "FRI";
 }

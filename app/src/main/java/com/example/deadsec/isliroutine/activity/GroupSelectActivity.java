@@ -44,13 +44,8 @@ public class GroupSelectActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_select);
+        loadDataOfGroup();
 
-        boolean isDataLoaded = PreferenceUtils.get(this).getGroupYearInitialized();
-        if(isDataLoaded) {
-           startActivity(new Intent(GroupSelectActivity.this,RoutineActivity.class));
-        }else {
-            loadDataOfGroup();
-        }
     }
 
     public void loadDataOfGroup() {
@@ -87,7 +82,7 @@ public class GroupSelectActivity extends AppCompatActivity {
         progressDoalog = new ProgressDialog(GroupSelectActivity.this);
         progressDoalog.setMax(100);
         progressDoalog.setMessage("This usually takes less than a second ");
-        progressDoalog.setTitle("Downloading Classes");
+        progressDoalog.setTitle("Downloading available groups");
         progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDoalog.show();
 

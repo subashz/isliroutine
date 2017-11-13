@@ -118,8 +118,7 @@ public class TableCreator extends SQLiteOpenHelper {
                         Teacher.Cols.UPDATED_AT + "," +
                         Teacher.Cols.EMAIL + "," +
                         Teacher.Cols.EXPERIENCE + "," +
-                        Teacher.Cols.FIRST_NAME + "," +
-                        Teacher.Cols.LAST_NAME + "," +
+                        Teacher.Cols.NAME + "," +
                         Teacher.Cols.MISC + "," +
                         Teacher.Cols.OFFICE_HOUR + "," +
                         Teacher.Cols.PHONE + "," +

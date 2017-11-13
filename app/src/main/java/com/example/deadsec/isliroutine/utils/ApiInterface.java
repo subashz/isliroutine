@@ -25,7 +25,7 @@ public interface ApiInterface {
     @GET("lession/{id}")
     Call<List<Lession>> lessionList(@Path("id") String id);
 
-    @GET("yeargroup/all")
+    @GET("group/all")
     Call<List<YearGroup>> groupList();
 
     @GET("timetable/{id}")
