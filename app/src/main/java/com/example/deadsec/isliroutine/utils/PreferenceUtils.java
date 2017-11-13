@@ -19,6 +19,8 @@ public class PreferenceUtils {
     public static final String GROUP_YEAR="group_year";
     public static final String TIME_TABLE_INITIALIZED="time_table_initialized";
 
+    public static final String CLASS_NOTIFICATION="class_notifications";
+
     public static PreferenceUtils get(Context context) {
         if(mPreferenceUtils == null) {
             mPreferenceUtils = new PreferenceUtils(context);
@@ -53,6 +55,9 @@ public class PreferenceUtils {
 
     public int getGroupYear() {
         return mPreferences.getInt(GROUP_YEAR,0);
+    }
+    public boolean getClassNotificationStatus() {
+        return mPreferences.getBoolean(CLASS_NOTIFICATION,false);
     }
 
 }

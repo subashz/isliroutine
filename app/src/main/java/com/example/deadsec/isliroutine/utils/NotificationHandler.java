@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -35,10 +36,12 @@ public class NotificationHandler {
         Intent startClassIntent = new Intent(context, NotificationPublisher.class);
         startClassIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, notifyId);
         startClassIntent.putExtra(NotificationPublisher.NOTIFICATION, startClassNotification);
+        startClassIntent.putExtra(NotificationPublisher.RINGER_TYPE, "silent");
 
         Intent endClassIntent = new Intent(context, NotificationPublisher.class);
         endClassIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, notifyId);
         endClassIntent.putExtra(NotificationPublisher.NOTIFICATION, endClassNotification);
+        endClassIntent.putExtra(NotificationPublisher.RINGER_TYPE, "normal");
 
         PendingIntent pIStartClass = PendingIntent.getBroadcast(context, notifyId+startHour, startClassIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent piEndClass = PendingIntent.getBroadcast(context, notifyId+endHour, endClassIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -75,6 +78,7 @@ public class NotificationHandler {
         Log.d("notificationhandler","Start time: "+startHour+" end time: "+endHour);
         alarmManager.set(AlarmManager.RTC_WAKEUP, cal2.getTimeInMillis(), piEndClass);
         Log.d(TAG,"scheduleNotification called");
+
     }
 
     public static Notification getNotification(Context context, String content) {
