@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
@@ -26,12 +27,11 @@
         <activity android:name=".activity.GroupSelectActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <receiver android:name=".utils.NotificationPublisher" />
+        <receiver android:name=".notification.NotificationPublisher" />
 
         <activity
             android:name=".activity.RoutineActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".activity.SettingActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
@@ -45,13 +45,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.deadsec.isliroutine.activity.RoutineActivity" />
         </activity>
-        <service android:name=".utils.SilentService" android:label="Silent Service">
+        <service android:name=".notification.NotificationService" android:label="Set Daily Notification alarm Service">
             <intent-filter>
-                <action android:name="com.example.deadsec.isliroutine.utils.SilentService"/>
+                <action android:name="com.example.deadsec.isliroutine.notification.NotificationService"/>
             </intent-filter>
         </service>
 
-        <receiver android:name=".utils.StartMyServiceAtBootReceiver"
+        <receiver android:name=".notification.NotificationReceiver"
             android:label="StartMyServiceAtBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>

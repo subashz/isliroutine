@@ -57,7 +57,7 @@ public class PreferenceUtils {
         return mPreferences.getInt(GROUP_YEAR,0);
     }
     public boolean getClassNotificationStatus() {
-        return mPreferences.getBoolean(CLASS_NOTIFICATION,false);
+        return mPreferences.getBoolean(CLASS_NOTIFICATION,true);
     }
 
 }

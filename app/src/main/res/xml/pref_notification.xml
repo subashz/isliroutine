@@ -3,7 +3,7 @@
     <!-- A 'parent' preference, which enables/disables child preferences (below)
          when checked/unchecked. -->
     <SwitchPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:key="class_notifications"
         android:title="Class Notifications" />
 </PreferenceScreen>

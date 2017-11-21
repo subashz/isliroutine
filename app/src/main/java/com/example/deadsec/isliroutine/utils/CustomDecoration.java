@@ -16,6 +16,8 @@ import com.framgia.library.calendardayview.EventView;
 import com.framgia.library.calendardayview.data.IEvent;
 import com.framgia.library.calendardayview.decoration.CdvDecorationDefault;
 
+import java.util.Calendar;
+
 /**
  * Created by deadsec on 10/30/17.
  */
@@ -50,13 +52,13 @@ public class CustomDecoration extends CdvDecorationDefault {
 
         ClassModel classModel = (ClassModel) event;
         className.setText(classModel.getCourseName());
-        teacherName.setText(classModel.getTeacherName());
-        location.setText(classModel.getLocation());
+        teacherName.setText(classModel.getTeacherName().split("\\.")[1]);
+        location.setText(classModel.getLocation().split("-")[1]);
         time.setText(String.format("%1$02d:%2$02d-%3$02d:%4$02d",
-                classModel.getStartTime().getTime().getHours(),
-                classModel.getStartTime().getTime().getMinutes(),
-                classModel.getEndTime().getTime().getHours(),
-                classModel.getEndTime().getTime().getMinutes()));
+                classModel.getStartTime().get(Calendar.HOUR_OF_DAY),
+                classModel.getStartTime().get(Calendar.MINUTE),
+                classModel.getEndTime().get(Calendar.HOUR_OF_DAY),
+                classModel.getEndTime().get(Calendar.MINUTE)));
 
         switch(classModel.getType()) {
             case "Lecture":
@@ -71,9 +73,7 @@ public class CustomDecoration extends CdvDecorationDefault {
         }
 
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
         linearLayout.addView(view);
-
         return eventView;
     }
 

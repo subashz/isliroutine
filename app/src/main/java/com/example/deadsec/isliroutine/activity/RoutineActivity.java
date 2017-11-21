@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -20,7 +21,6 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -34,12 +34,11 @@ import com.example.deadsec.isliroutine.model.Teacher;
 import com.example.deadsec.isliroutine.model.TimeTable;
 import com.example.deadsec.isliroutine.utils.ApiClient;
 import com.example.deadsec.isliroutine.utils.ApiInterface;
-import com.example.deadsec.isliroutine.utils.NotificationHandler;
 import com.example.deadsec.isliroutine.R;
 import com.example.deadsec.isliroutine.fragment.DailyClassFragment;
 import com.example.deadsec.isliroutine.model.Day;
 import com.example.deadsec.isliroutine.utils.PreferenceUtils;
-import com.example.deadsec.isliroutine.utils.SilentService;
+import com.example.deadsec.isliroutine.notification.NotificationService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,7 +47,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class RoutineActivity extends AppCompatActivity {
 
@@ -59,10 +57,10 @@ public class RoutineActivity extends AppCompatActivity {
     private ProgressDialog progressDoalog;
     private TextView toolbarTitle;
     private ViewPager mViewPager;
-    private int dissmissCounter=0;
-    private int dissmissMax=0;
+    private int dissmissCounter;
+    private int dissmissMax;
     private int groupIndex;
-    private boolean doubleBackPressStatus = false;
+    private boolean doubleBackPressStatus;
     private CoordinatorLayout mainView;
 
     @Override
@@ -89,6 +87,8 @@ public class RoutineActivity extends AppCompatActivity {
         } else {
             init();
         }
+
+
     }
 
     public void init() {
@@ -104,8 +104,11 @@ public class RoutineActivity extends AppCompatActivity {
         String coloredText = "<font color=#ed3237>Isli</font> <font color=#3e4095>Routine</font>  <font color=#3e4095>"+groupName+"</font>" ;
         toolbarTitle.setText(Html.fromHtml(coloredText));
 
+        //notification handler..
         //NotificationHandler.scheduleNotification(this,  5000);
-        startService(new Intent(this, SilentService.class));
+        //NotificationHandler.SetDailyRepeatingNotification(this,true);
+        NotificationService.setDailyRepeatingNotification(this,true);
+        Log.d(TAG, "init: called start service");
 
         //mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         //tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
@@ -124,6 +127,7 @@ public class RoutineActivity extends AppCompatActivity {
                 && !notificationManager.isNotificationPolicyAccessGranted()) {
 
             Snackbar snack=Snackbar.make(mainView,"Please toggle disturb mode for auto silent mode",Snackbar.LENGTH_INDEFINITE);
+            snack.setActionTextColor(ContextCompat.getColor(this,R.color.colorAccent));
             snack.setAction("To Setting", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -131,19 +135,16 @@ public class RoutineActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             }).show();
-
         }
-
-
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.SUNDAY), "Sun");
-        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.MONDAY), "Mon");
-        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.TUESDAY), "Tue");
-        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.WEDNESDAY), "Wed");
-        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.THURSDAY), "Thu");
-        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.FRIDAY), "Fri");
+        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.SUNDAY,1), "Sun");
+        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.MONDAY,2), "Mon");
+        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.TUESDAY,3), "Tue");
+        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.WEDNESDAY,4), "Wed");
+        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.THURSDAY,5), "Thu");
+        mSectionsPagerAdapter.addFragment(DailyClassFragment.newInstance(Day.FRIDAY,6), "Fri");
         viewPager.setAdapter(mSectionsPagerAdapter);
     }
 

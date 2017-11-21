@@ -24,7 +24,7 @@ import com.example.deadsec.isliroutine.R;
 
 import java.util.List;
 
-public class SettingsActivity extends AppCompatPreferenceActivity {
+public class SettingsActivity extends PreferenceActivity {
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -54,16 +54,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupActionBar();
+        //setupActionBar();
     }
 
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-    }
+    //private void setupActionBar() {
+        //ActionBar actionBar = getSupportActionBar();
+        //if (actionBar != null) {
+            //// Show the Up button in the action bar.
+            //actionBar.setDisplayHomeAsUpEnabled(true);
+        //}
+    //}
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
