@@ -2,7 +2,9 @@
 
     <!-- A 'parent' preference, which enables/disables child preferences (below)
          when checked/unchecked. -->
-    <PreferenceCategory android:title="Reminder Notification">
+    <PreferenceCategory
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="Reminder Notification">
 
         <SwitchPreference
             android:defaultValue="true"

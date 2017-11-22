@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.deadsec.isliroutine">
+    package="tk.blankstudio.isliroutine">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -40,15 +40,14 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/SettingTheme"
             android:parentActivityName=".activity.RoutineActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.deadsec.isliroutine.activity.RoutineActivity" />
+                android:value="tk.blankstudio.isliroutine.activity.RoutineActivity" />
         </activity>
         <service android:name=".notification.NotificationService" android:label="Set Daily Notification alarm Service">
             <intent-filter>
-                <action android:name="com.example.deadsec.isliroutine.notification.NotificationService"/>
+                <action android:name="tk.blankstudio.isliroutine.notification.NotificationService"/>
             </intent-filter>
         </service>
 
