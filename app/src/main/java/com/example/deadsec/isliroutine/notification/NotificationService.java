@@ -98,21 +98,18 @@ public class NotificationService extends Service {
         int endHour = classModel.getEndTime().get(Calendar.HOUR_OF_DAY);
         int uId = (int) classModel.getId();
 
-        Notification startClassNotification = getNotification(context, "Started class of " + classModel.getCourseName(), "Be patient, it will be over soon.");
-        Notification endClassNotification = getNotification(context, "Class of " + classModel.getCourseName() + " has ended", "Woosh.. It's finally over");
-
         Intent startClassIntent = new Intent(context, NotificationPublisher.class);
-        startClassIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, uId);
-        startClassIntent.putExtra(NotificationPublisher.NOTIFICATION, startClassNotification);
+        startClassIntent.putExtra(NotificationPublisher.UID, uId);
         startClassIntent.putExtra(NotificationPublisher.START_HOUR, startHour);
         startClassIntent.putExtra(NotificationPublisher.START_MINUTE, startMinute);
-        startClassIntent.putExtra(NotificationPublisher.RINGER_TYPE, NotificationPublisher.RINGER_SILENT);
+        startClassIntent.putExtra(NotificationPublisher.COURSE_NAME,classModel.getCourseName());
+        startClassIntent.putExtra(NotificationPublisher.CLASS_STATUS, NotificationPublisher.CLASS_STARTING);
 
         Intent endClassIntent = new Intent(context, NotificationPublisher.class);
-        endClassIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, uId);
-        endClassIntent.putExtra(NotificationPublisher.NOTIFICATION, endClassNotification);
-        endClassIntent.putExtra(NotificationPublisher.RINGER_TYPE, NotificationPublisher.RINGER_NORMAL);
+        endClassIntent.putExtra(NotificationPublisher.UID, uId);
+        endClassIntent.putExtra(NotificationPublisher.CLASS_STATUS, NotificationPublisher.CLASS_ENDING);
         endClassIntent.putExtra(NotificationPublisher.END_HOUR, endHour);
+        endClassIntent.putExtra(NotificationPublisher.COURSE_NAME,classModel.getCourseName());
         endClassIntent.putExtra(NotificationPublisher.END_MINUTE, endMinute);
 
         PendingIntent pIStartClass = PendingIntent.getBroadcast(context, (uId + startHour) * startHour, startClassIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -128,7 +125,6 @@ public class NotificationService extends Service {
         cal2.set(Calendar.MINUTE, endMinute);
         cal2.set(Calendar.SECOND, 0);
 
-
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(piEndClass);
         alarmManager.cancel(pIStartClass);
@@ -141,27 +137,6 @@ public class NotificationService extends Service {
             alarmManager.set(AlarmManager.RTC_WAKEUP, cal2.getTimeInMillis(), piEndClass);
         }
         Log.d("NotificationHandler", "Set Alarm at Time at: sh:" + startHour + " sm:" + startMinute + " eh:" + endHour + " em:" + endMinute);
-
-    }
-
-    /**
-     * This method returns the notifications
-     * @param context
-     * @param title
-     * @param content
-     * @return
-     */
-    public Notification getNotification(Context context, String title, String content) {
-        Notification.Builder builder = new Notification.Builder(context);
-        builder.setContentTitle(title);
-        builder.setContentText(content);
-        builder.setSmallIcon(R.drawable.ic_splash_icon);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setBadgeIconType(R.drawable.ic_splash_icon);
-        }
-        builder.setVibrate(new long[]{1000, 1000});
-        return builder.build();
     }
 
 

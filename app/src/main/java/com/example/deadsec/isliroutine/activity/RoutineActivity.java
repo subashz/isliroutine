@@ -104,14 +104,7 @@ public class RoutineActivity extends AppCompatActivity {
         String coloredText = "<font color=#ed3237>Isli</font> <font color=#3e4095>Routine</font>  <font color=#3e4095>"+groupName+"</font>" ;
         toolbarTitle.setText(Html.fromHtml(coloredText));
 
-        //notification handler..
-        //NotificationHandler.scheduleNotification(this,  5000);
-        //NotificationHandler.SetDailyRepeatingNotification(this,true);
         NotificationService.setDailyRepeatingNotification(this,true);
-        Log.d(TAG, "init: called start service");
-
-        //mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        //tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
         mViewPager.setOffscreenPageLimit(7);
         setupViewPager(mViewPager);

@@ -2,8 +2,26 @@
 
     <!-- A 'parent' preference, which enables/disables child preferences (below)
          when checked/unchecked. -->
+    <PreferenceCategory android:title="Reminder Notification">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="class_notifications"
+            android:summary="@string/pref_class_notification_summary"
+            android:title="@string/pref_class_notification_title" />
+
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="class_notification_vibrate"
+            android:summary="Vibrate when notification pops up"
+            android:title="Vibrate" />
+    </PreferenceCategory>
+
     <SwitchPreference
         android:defaultValue="true"
-        android:key="class_notifications"
-        android:title="Class Notifications" />
+        android:key="auto_silent_mode"
+        android:summary="@string/pref_auto_silent_summary"
+        android:title="@string/pref_auto_silent_title" />
+
 </PreferenceScreen>

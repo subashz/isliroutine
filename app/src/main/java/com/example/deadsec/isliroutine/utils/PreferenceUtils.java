@@ -18,8 +18,10 @@ public class PreferenceUtils {
     public static final String GROUP_YEAR_INITIALIZED="group_year_initialized";
     public static final String GROUP_YEAR="group_year";
     public static final String TIME_TABLE_INITIALIZED="time_table_initialized";
+    public static final String CLASS_NOTIFICATION_REMINDER="class_notifications";
+    public static final String NOTIFICATION_VIBRATE="class_notification_vibrate";
+    public static final String AUTO_SILENT_MODE="auto_silent_mode";
 
-    public static final String CLASS_NOTIFICATION="class_notifications";
 
     public static PreferenceUtils get(Context context) {
         if(mPreferenceUtils == null) {
@@ -56,8 +58,15 @@ public class PreferenceUtils {
     public int getGroupYear() {
         return mPreferences.getInt(GROUP_YEAR,0);
     }
-    public boolean getClassNotificationStatus() {
-        return mPreferences.getBoolean(CLASS_NOTIFICATION,true);
+
+    public boolean getAutoSilentMode() {
+        return mPreferences.getBoolean(AUTO_SILENT_MODE,true);
+    }
+    public boolean getClassNotificationReminder() {
+        return mPreferences.getBoolean(CLASS_NOTIFICATION_REMINDER,true);
+    }
+    public boolean getNotificationVibrate() {
+        return mPreferences.getBoolean(NOTIFICATION_VIBRATE,true);
     }
 
 }

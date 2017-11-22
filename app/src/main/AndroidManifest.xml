@@ -40,6 +40,7 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
+            android:theme="@style/SettingTheme"
             android:parentActivityName=".activity.RoutineActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
