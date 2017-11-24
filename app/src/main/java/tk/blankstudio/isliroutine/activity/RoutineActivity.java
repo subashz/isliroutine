@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -30,8 +30,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import okhttp3.Dispatcher;
-import okhttp3.OkHttpClient;
 import tk.blankstudio.isliroutine.loader.ClassDataLab;
 import tk.blankstudio.isliroutine.model.Course;
 import tk.blankstudio.isliroutine.model.Lession;
@@ -65,15 +63,11 @@ public class RoutineActivity extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ApiInterface apiInterface;
     private ProgressDialog progressDoalog;
-    private TextView toolbarTitle;
-    private ViewPager mViewPager;
     private int dissmissCounter;
     private int dissmissMax;
     private int groupIndex;
     private boolean isServerProblem;
     private boolean doubleBackPressStatus;
-    private CoordinatorLayout mainView;
-    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +85,7 @@ public class RoutineActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if (PreferenceUtils.get(this).getTimeTableInitialized() != true) {
+        if (!PreferenceUtils.get(this).getTimeTableInitialized()) {
             loadTimeTable(groupIndex);
         } else {
             init();
@@ -103,27 +97,28 @@ public class RoutineActivity extends AppCompatActivity {
     public void init() {
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mainView=(CoordinatorLayout)findViewById(R.id.main_content);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
+        CoordinatorLayout mainView = (CoordinatorLayout) findViewById(R.id.main_content);
+        viewPager.setAdapter(mSectionsPagerAdapter);
 
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-        toolbar.getOverflowIcon().setTint(Color.BLACK);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            toolbar.getOverflowIcon().setTint(Color.BLACK);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        toolbarTitle=(TextView)findViewById(R.id.toolbar_title);
+        TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         String groupName =ClassDataLab.get(this).getGroupName(String.valueOf(PreferenceUtils.get(this).getGroupYear())).toLowerCase();
         String coloredText = getString(R.string.title_activity_routine,groupName);
         toolbarTitle.setText(Html.fromHtml(coloredText));
 
         NotificationService.setDailyRepeatingNotification(this,true);
 
-        mViewPager.setOffscreenPageLimit(7);
-        setupViewPager(mViewPager);
-        tabLayout.setupWithViewPager(mViewPager);
+        viewPager.setOffscreenPageLimit(7);
+        setupViewPager(viewPager);
+        tabLayout.setupWithViewPager(viewPager);
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-        mViewPager.setCurrentItem(day, true);
+        viewPager.setCurrentItem(day, true);
 
 
         NotificationManager notificationManager =
@@ -137,7 +132,7 @@ public class RoutineActivity extends AppCompatActivity {
             snack.setAction(getString(R.string.go_to_setting_text), new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent( android.provider.Settings .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                    Intent intent = new Intent( Settings .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                     startActivity(intent);
                 }
             }).show();
@@ -171,9 +166,6 @@ public class RoutineActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            if(true) {
-                throw new RuntimeException("This is a crash");
-            }
             startActivity(new Intent(this,SettingsActivity.class));
 
         }

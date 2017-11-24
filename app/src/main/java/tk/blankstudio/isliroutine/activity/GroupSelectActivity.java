@@ -25,6 +25,7 @@ import tk.blankstudio.isliroutine.utils.ApiClient;
 import tk.blankstudio.isliroutine.utils.ApiInterface;
 import tk.blankstudio.isliroutine.utils.PreferenceUtils;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class GroupSelectActivity extends AppCompatActivity {
     private List<String> items;
     private Button showRoutineBtn;
     private int groupIndex;
+    private ProgressDialog progressDoalog;
     public static final String TAG=GroupSelectActivity.class.getSimpleName();
 
     @Override
@@ -98,10 +100,9 @@ public class GroupSelectActivity extends AppCompatActivity {
         });
 
 
-        final ProgressDialog progressDoalog;
         progressDoalog = new ProgressDialog(GroupSelectActivity.this);
         progressDoalog.setMax(100);
-        progressDoalog.setMessage("This usualbly takes less than a second ");
+        progressDoalog.setMessage("This usually takes less than a second ");
         progressDoalog.setTitle("Downloading available groups");
         progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDoalog.show();
@@ -127,7 +128,8 @@ public class GroupSelectActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<YearGroup>> call, Throwable t) {
                 Log.d(TAG, "onFailure: "+t);
-                finish();
+                call.cancel();
+                handleFailureThrowable(t);
             }
         });
     }
@@ -137,5 +139,33 @@ public class GroupSelectActivity extends AppCompatActivity {
         boolean isNetworkAvailable = cm.getActiveNetworkInfo()!=null;
         boolean isNetworkConnected = isNetworkAvailable && cm.getActiveNetworkInfo().isConnected();
         return isNetworkConnected;
+    }
+
+    public void showRetryDialog(String title,String message) {
+        AlertDialog alertDialog= new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    loadDataOfGroup();
+                    }
+                }).create();
+        alertDialog.show();
+    }
+
+    public void handleFailureThrowable(Throwable t) {
+            progressDoalog.dismiss();
+            if (t instanceof SocketTimeoutException) {
+                showRetryDialog("Server Timeout", "Mr. Server seems busy. Try again after some time");
+            }else {
+                showRetryDialog("Server Error", "Cannot contact Mr. Server. Try later.");
+            }
     }
 }
