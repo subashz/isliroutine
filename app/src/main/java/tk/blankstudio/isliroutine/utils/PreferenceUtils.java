@@ -21,6 +21,7 @@ public class PreferenceUtils {
     public static final String CLASS_NOTIFICATION_REMINDER="class_notifications";
     public static final String NOTIFICATION_VIBRATE="class_notification_vibrate";
     public static final String AUTO_SILENT_MODE="auto_silent_mode";
+    public static final String LIST_ALARM_ID="list_alarm_ids";
 
 
     public static PreferenceUtils get(Context context) {
@@ -67,6 +68,12 @@ public class PreferenceUtils {
     }
     public boolean getNotificationVibrate() {
         return mPreferences.getBoolean(NOTIFICATION_VIBRATE,true);
+    }
+    public String getAlarmIds() {
+        return mPreferences.getString(LIST_ALARM_ID,"[]");
+    }
+    public void setAlarmIds(String alarmIds) {
+         mPreferences.edit().putString(LIST_ALARM_ID,alarmIds).commit();
     }
 
 }

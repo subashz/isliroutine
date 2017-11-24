@@ -14,6 +14,8 @@ import android.util.Log;
 import tk.blankstudio.isliroutine.R;
 import tk.blankstudio.isliroutine.loader.ClassDataLab;
 import tk.blankstudio.isliroutine.model.ClassModel;
+import tk.blankstudio.isliroutine.utils.AlarmUtils;
+
 import com.framgia.library.calendardayview.data.IEvent;
 
 import java.text.SimpleDateFormat;
@@ -69,19 +71,21 @@ public class NotificationService extends Service {
      * @param choice
      */
     public static void setDailyRepeatingNotification(Context context, boolean choice) {
-        Intent intent1 = new Intent(context, NotificationReceiver.class);
-        intent1.setAction("repeat");
+        Intent  intent = new Intent(context, NotificationReceiver.class);
+        intent.setAction("repeat");
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 2);
         cal.set(Calendar.MINUTE, 0);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, REQ_CODE_SET_DAILY_REPEATING, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.cancel(pendingIntent);
+        //PendingIntent pendingIntent = PendingIntent.getBroadcast(context, REQ_CODE_SET_DAILY_REPEATING, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+        //AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        //am.cancel(pendingIntent);
         if (choice) {
-            am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+            //am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+            AlarmUtils.addRepeatingAlarm(context,intent,REQ_CODE_SET_DAILY_REPEATING,cal);
         } else {
-            am.cancel(pendingIntent);
-        }
+            AlarmUtils.cancelAlarm(context,intent,REQ_CODE_SET_DAILY_REPEATING);
+            //am.cancel(pendingIntent);
+       }
     }
 
     /**
@@ -112,30 +116,33 @@ public class NotificationService extends Service {
         endClassIntent.putExtra(NotificationPublisher.COURSE_NAME,classModel.getCourseName());
         endClassIntent.putExtra(NotificationPublisher.END_MINUTE, endMinute);
 
-        PendingIntent pIStartClass = PendingIntent.getBroadcast(context, (uId + startHour) * startHour, startClassIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent piEndClass = PendingIntent.getBroadcast(context, (uId + endHour) * endHour, endClassIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //PendingIntent pIStartClass = PendingIntent.getBroadcast(context, (uId + startHour) * startHour, startClassIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //PendingIntent piEndClass = PendingIntent.getBroadcast(context, (uId + endHour) * endHour, endClassIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, startHour);
-        cal.set(Calendar.MINUTE, startMinute);
-        cal.set(Calendar.SECOND, 0);
+        Calendar startCal = Calendar.getInstance();
+        startCal.set(Calendar.HOUR_OF_DAY, startHour);
+        startCal.set(Calendar.MINUTE, startMinute);
+        startCal.set(Calendar.SECOND, 0);
 
-        Calendar cal2 = Calendar.getInstance();
-        cal2.set(Calendar.HOUR_OF_DAY, endHour);
-        cal2.set(Calendar.MINUTE, endMinute);
-        cal2.set(Calendar.SECOND, 0);
+        Calendar endCal = Calendar.getInstance();
+        endCal.set(Calendar.HOUR_OF_DAY, endHour);
+        endCal.set(Calendar.MINUTE, endMinute);
+        endCal.set(Calendar.SECOND, 0);
 
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(piEndClass);
-        alarmManager.cancel(pIStartClass);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pIStartClass);
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal2.getTimeInMillis(), piEndClass);
-        } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pIStartClass);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, cal2.getTimeInMillis(), piEndClass);
-        }
+        AlarmUtils.addAlarm(context,endClassIntent,(uId+endHour)*endHour,endCal);
+        AlarmUtils.addAlarm(context,startClassIntent,(uId+startHour)*startHour,startCal);
+//
+//        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+//        alarmManager.cancel(piEndClass);
+//        alarmManager.cancel(pIStartClass);
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pIStartClass);
+//            alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal2.getTimeInMillis(), piEndClass);
+//        } else {
+//            alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pIStartClass);
+//            alarmManager.set(AlarmManager.RTC_WAKEUP, cal2.getTimeInMillis(), piEndClass);
+//        }
         Log.d("NotificationHandler", "Set Alarm at Time at: sh:" + startHour + " sm:" + startMinute + " eh:" + endHour + " em:" + endMinute);
     }
 

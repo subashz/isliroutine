@@ -3,13 +3,17 @@ package tk.blankstudio.isliroutine.activity;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -26,6 +30,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import okhttp3.Dispatcher;
+import okhttp3.OkHttpClient;
 import tk.blankstudio.isliroutine.loader.ClassDataLab;
 import tk.blankstudio.isliroutine.model.Course;
 import tk.blankstudio.isliroutine.model.Lession;
@@ -40,6 +46,7 @@ import tk.blankstudio.isliroutine.model.Day;
 import tk.blankstudio.isliroutine.utils.PreferenceUtils;
 import tk.blankstudio.isliroutine.notification.NotificationService;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -47,6 +54,9 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 public class RoutineActivity extends AppCompatActivity {
 
@@ -60,14 +70,16 @@ public class RoutineActivity extends AppCompatActivity {
     private int dissmissCounter;
     private int dissmissMax;
     private int groupIndex;
+    private boolean isServerProblem;
     private boolean doubleBackPressStatus;
     private CoordinatorLayout mainView;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_routine);
-
 
         progressDoalog = new ProgressDialog(RoutineActivity.this);
         progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -80,9 +92,6 @@ public class RoutineActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (PreferenceUtils.get(this).getTimeTableInitialized() != true) {
-            progressDoalog.setMessage("This usually takes less than a second ");
-            progressDoalog.setTitle("Downloading Classes");
-            progressDoalog.show();
             loadTimeTable(groupIndex);
         } else {
             init();
@@ -98,6 +107,9 @@ public class RoutineActivity extends AppCompatActivity {
         mainView=(CoordinatorLayout)findViewById(R.id.main_content);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar.getOverflowIcon().setTint(Color.BLACK);
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         toolbarTitle=(TextView)findViewById(R.id.toolbar_title);
         String groupName =ClassDataLab.get(this).getGroupName(String.valueOf(PreferenceUtils.get(this).getGroupYear())).toLowerCase();
@@ -112,6 +124,7 @@ public class RoutineActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
         mViewPager.setCurrentItem(day, true);
+
 
         NotificationManager notificationManager =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -158,7 +171,11 @@ public class RoutineActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            if(true) {
+                throw new RuntimeException("This is a crash");
+            }
             startActivity(new Intent(this,SettingsActivity.class));
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -198,29 +215,38 @@ public class RoutineActivity extends AppCompatActivity {
     }
 
     public void loadTimeTable(int groupId) {
+
+        isServerProblem=false;
+        progressDoalog.setMessage("This usually takes less than a second ");
+        progressDoalog.setTitle("Downloading Classes");
+        progressDoalog.show();
+
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<TimeTable>> call = apiInterface.timeTableList(String.valueOf(groupId));
         call.enqueue(new Callback<List<TimeTable>>() {
             @Override
             public void onResponse(Call<List<TimeTable>> call, Response<List<TimeTable>> response) {
-                List<TimeTable> timeTables = response.body();
-                Log.d(TAG, "onResponse: "+response.toString());
-                dissmissMax=(timeTables.size()*4)+1;
+                if(response.isSuccessful()) {
+                    List<TimeTable> timeTables = response.body();
+                    Log.d(TAG, "onResponse: " + response.toString());
+                    dissmissMax = (timeTables.size() * 4) + 1;
 
-                for (TimeTable timeTable : timeTables) {
-                    ClassDataLab.get(RoutineActivity.this).addToTimeTable(timeTable);
-                    loadTeacherTable(timeTable.getTeacherId());
-                    loadCourseTable(timeTable.getCourseId());
-                    loadLessionTable(timeTable.getLessionId());
-                    loadRoomTable(timeTable.getRoomId());
+                    for (TimeTable timeTable : timeTables) {
+                        ClassDataLab.get(RoutineActivity.this).addToTimeTable(timeTable);
+                        loadTeacherTable(timeTable.getTeacherId());
+                        loadCourseTable(timeTable.getCourseId());
+                        loadLessionTable(timeTable.getLessionId());
+                        loadRoomTable(timeTable.getRoomId());
+                    }
+                    dissmissCounter();
+                    PreferenceUtils.get(RoutineActivity.this).setTimeTableInitialized(true);
                 }
-                dissmissCounter();
-                PreferenceUtils.get(RoutineActivity.this).setTimeTableInitialized(true);
             }
 
             @Override
             public void onFailure(Call<List<TimeTable>> call, Throwable t) {
                 Log.d(TAG, "onFailure: because of ",t);
+                handleFailureThrowable(t);
             }
         });
         Log.d(TAG, "loadTimeTable: response successfully completed");
@@ -244,6 +270,7 @@ public class RoutineActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<Teacher>> call, Throwable t) {
                 Log.d(TAG, "onFailure: because of ",t);
+                handleFailureThrowable(t);
             }
         });
         Log.d("response is: ", "Completed");
@@ -267,6 +294,7 @@ public class RoutineActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<Lession>> call, Throwable t) {
                 Log.d(TAG, "onFailure: because of ",t);
+                handleFailureThrowable(t);
             }
         });
         Log.d(TAG, "loadLessionTable: successfully completed");
@@ -290,6 +318,7 @@ public class RoutineActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<Room>> call, Throwable t) {
                 Log.d(TAG, "onFailure: because of ",t);
+                handleFailureThrowable(t);
             }
         });
         Log.d(TAG, "loadRoomTable: completed");
@@ -312,6 +341,7 @@ public class RoutineActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<Course>> call, Throwable t) {
                 Log.d(TAG, "onFailure: because of ",t);
+                handleFailureThrowable(t);
             }
         });
         Log.d(TAG, "loadCourseTable: completed");
@@ -322,6 +352,38 @@ public class RoutineActivity extends AppCompatActivity {
         if(dissmissCounter==dissmissMax) {
             progressDoalog.dismiss();
             init();
+        }
+    }
+
+    public void showRetryDialog(String title,String message) {
+        AlertDialog alertDialog= new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    ApiClient.getOkHttpClient().dispatcher().cancelAll();
+                    loadTimeTable(groupIndex);
+                    }
+                }).create();
+        alertDialog.show();
+    }
+
+    public void handleFailureThrowable(Throwable t) {
+        if(!isServerProblem) {
+            progressDoalog.dismiss();
+            isServerProblem=true;
+            if (t instanceof SocketTimeoutException) {
+                showRetryDialog("Server Timeout", "Mr. Server seems busy. Try again after some time");
+            }else {
+                showRetryDialog("Server Error", "Cannot contact Mr. Server. Try later.");
+            }
         }
     }
 

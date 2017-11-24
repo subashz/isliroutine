@@ -43,10 +43,12 @@ public class GroupSelectActivity extends AppCompatActivity {
     private List<String> items;
     private Button showRoutineBtn;
     private int groupIndex;
+    public static final String TAG=GroupSelectActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_group_select);
         if(isNetworkAvailableAndConnected()) {
             loadDataOfGroup();
@@ -105,6 +107,7 @@ public class GroupSelectActivity extends AppCompatActivity {
         progressDoalog.show();
 
         Call<List<YearGroup>> call = mApiInterface.groupList();
+        Log.d(TAG, "loadDataOfGroup: Enqueing the api request calls ");
         call.enqueue(new Callback<List<YearGroup>>() {
             @Override
             public void onResponse(Call<List<YearGroup>> call, Response<List<YearGroup>> response) {
@@ -123,7 +126,8 @@ public class GroupSelectActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<YearGroup>> call, Throwable t) {
-
+                Log.d(TAG, "onFailure: "+t);
+                finish();
             }
         });
     }

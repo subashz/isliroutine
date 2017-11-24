@@ -9,9 +9,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -58,6 +58,10 @@
             </intent-filter>
         </receiver>
 
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="1fa158df2b1bf417f3e02e7c2782805d41bad7b3" />
     </application>
 
 </manifest>

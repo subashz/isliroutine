@@ -25,5 +25,7 @@
     <string name="go_to_setting_text">To Setting </string>
     <string name="enable_wifi_text">Please enable wifi/data connection to download the schedule.</string>
     <string name="no_internet_text">No Internet</string>
+    <string name="group_select_note">Note: This app is still in alpha release. </string>
+
 
 </resources>

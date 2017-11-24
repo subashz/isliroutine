@@ -53,7 +53,7 @@
         android:lines="2"
         android:maxLines="3"
 
-        android:text="Note: BBA timetable schedule may overlap because of multiple time table tracks"
+        android:text="@string/group_select_note"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

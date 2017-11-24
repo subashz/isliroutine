@@ -67,9 +67,9 @@ public class NotificationPublisher extends BroadcastReceiver {
         // debugging
 
         Log.d(TAG, "onReceive: Current Time at: sh:" + cal.get(Calendar.HOUR_OF_DAY) + " sm:" + cal.get(Calendar.MINUTE) + " day: " + cal.get(Calendar.DATE));
-        if (type.equals("silent")) {
+        if (type.equals(CLASS_STARTING)) {
             Log.d(TAG, "onReceive:Triggered Start Time at: sh:" + startHour + " sm:" + startMinute);
-        } else if (type.equals("normal")) {
+        } else if (type.equals(CLASS_ENDING)) {
             Log.d(TAG, "onReceive:Triggered End Time at: eh:" + endHour + " em:" + endMinute);
         }
     }
@@ -106,10 +106,10 @@ public class NotificationPublisher extends BroadcastReceiver {
         Notification.Builder builder = new Notification.Builder(context);
         builder.setContentTitle(classTitle);
         builder.setContentText(classText);
-        builder.setSmallIcon(R.drawable.ic_splash_icon);
+        builder.setSmallIcon(R.drawable.ic_logo);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setBadgeIconType(R.drawable.ic_splash_icon);
+            builder.setBadgeIconType(R.drawable.ic_logo);
         }
 
         if(PreferenceUtils.get(context).getNotificationVibrate()) {
