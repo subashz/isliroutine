@@ -246,7 +246,7 @@ public class DbHelper {
                 String title = cursor.getString(cursor.getColumnIndex("title"));
                 String module_id = cursor.getString(cursor.getColumnIndex("module_id"));
                 Log.d("Type", type);
-                events.add(ClassModel.getClassModel(context, uuid, start_hour, start_minute, end_hour, end_minute, title, block + " " + class_room, name, module_id,type));
+                events.add(ClassModel.getClassModel(context, uuid, start_hour, start_minute, end_hour, end_minute, title, class_room, name, module_id,type));
             }
         } catch (Exception e) {
             Log.d("Exception", "occured",e);

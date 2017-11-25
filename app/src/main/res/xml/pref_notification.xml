@@ -30,9 +30,13 @@
             android:targetPackage="tk.blankstudio.isliroutine"
             android:targetClass="tk.blankstudio.isliroutine.activity.GroupSelectActivity"
             android:action="update_time_table"/>
-
-
     </Preference>
+    <Preference
+        android:title="About"
+        android:summary="Information about this application"
+        android:enabled="true"
+        style="?android:preferenceInformationStyle"
+        key="about" />
 
 
 </PreferenceScreen>

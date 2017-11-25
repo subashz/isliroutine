@@ -2,6 +2,7 @@ package tk.blankstudio.isliroutine.utils;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import java.util.Calendar;
 
 public class CustomDecoration extends CdvDecorationDefault {
     Context context;
+    public static final String TAG=CustomDecoration.class.getSimpleName();
 
     public CustomDecoration(Context context) {
         super(context);
@@ -52,8 +54,11 @@ public class CustomDecoration extends CdvDecorationDefault {
 
         ClassModel classModel = (ClassModel) event;
         className.setText(classModel.getCourseName());
-        teacherName.setText(classModel.getTeacherName().split("\\.")[1]);
-        location.setText(classModel.getLocation().split("-")[1]);
+        String teacher=classModel.getTeacherName().split("\\.")[1];
+        teacherName.setText(teacher);
+        String classRoom=classModel.getLocation().split("-")[1];
+        location.setText(classRoom);
+        Log.d(TAG, "getEventView: teacher:"+teacher+" classRoom:"+classRoom+" full: teacher:"+classModel.getTeacherName()+" fullClass:"+classModel.getLocation());
         time.setText(String.format("%1$02d:%2$02d-%3$02d:%4$02d",
                 classModel.getStartTime().get(Calendar.HOUR_OF_DAY),
                 classModel.getStartTime().get(Calendar.MINUTE),

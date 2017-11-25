@@ -20,29 +20,37 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_weight="1"
-            android:background="#ffffff"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:subtitle="subtitle"
-            app:subtitleTextColor="@color/colorAccent">
+            android:theme="@style/WhiteToolBar"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:fontFamily="@font/lato"
+                    android:layout_centerVertical="true"
+                    android:textAlignment="center"
+                    android:textSize="24sp" />
 
             <Spinner
                 android:id="@+id/toolbar_group_select"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:backgroundTint="@color/cardview_light_background"
+                android:layout_alignParentRight="true"
+                android:textAlignment="viewEnd"
                 android:dropDownSelector="@color/colorPrimary"
                 android:spinnerMode="dialog"
-                android:gravity="top|left" />
+                android:gravity="end" />
 
-            <TextView
-                android:id="@+id/toolbar_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textAlignment="center"
-                android:fontFamily="@font/lato"
-                android:textSize="24sp" />
+            </RelativeLayout>
 
         </android.support.v7.widget.Toolbar>
 

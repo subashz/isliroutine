@@ -33,6 +33,7 @@ import tk.blankstudio.isliroutine.utils.PreferenceUtils;
 import java.net.SocketTimeoutException;
 import java.security.acl.Group;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -72,7 +73,7 @@ public class GroupSelectActivity extends AppCompatActivity {
 
     public void initData() {
         items = new ArrayList<>();
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.item_spinner_year_group, items);
         final List<YearGroup> mYearGroup = ClassDataLab.get(this).getYearGroups();
 
         final List<Integer> itemsIds=new ArrayList<>();
@@ -108,24 +109,7 @@ public class GroupSelectActivity extends AppCompatActivity {
                 final Intent intent = new Intent(GroupSelectActivity.this, RoutineActivity.class);
                 intent.putExtra("GROUPINDEX", groupIndex);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                AlertDialog alertDialog = new AlertDialog.Builder(GroupSelectActivity.this)
-                        .setTitle("Do you want to make "+ClassDataLab.get(GroupSelectActivity.this).getGroupName(String.valueOf(groupIndex))+" your default group")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                PreferenceUtils.get(GroupSelectActivity.this).setDefaultGroupYear(groupIndex);
-                                saveGroupId(groupIndex);
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                saveGroupId(groupIndex);
-                                startActivity(intent);
-                            }
-                        }).setCancelable(false).create();
-                alertDialog.show();
+                startActivity(intent);
             }
         });
     }
@@ -193,8 +177,8 @@ public class GroupSelectActivity extends AppCompatActivity {
         }).loadGroupYear();
     }
 
-    private void saveGroupId(int id) {
-        List<Integer> yearGroupIds = getYearGroupIds(this);
+    public static void saveGroupId(Context context,int id) {
+        List<Integer> yearGroupIds = getYearGroupIds(context);
 
         if (yearGroupIds.contains(id)) {
             return;
@@ -202,18 +186,18 @@ public class GroupSelectActivity extends AppCompatActivity {
 
         yearGroupIds.add(id);
 
-        saveIdsInPreferences(yearGroupIds);
+        saveIdsInPreferences(context,yearGroupIds);
     }
 
-    private void removeYearGroupId(int id) {
-        List<Integer> yearGroupIds = getYearGroupIds(this);
+    public static void removeYearGroupId(Context context,int id) {
+        List<Integer> yearGroupIds = getYearGroupIds(context);
 
         for (int i = 0; i < yearGroupIds.size(); i++) {
             if (yearGroupIds.get(i) == id)
                 yearGroupIds.remove(i);
         }
 
-        saveIdsInPreferences(yearGroupIds);
+        saveIdsInPreferences(context,yearGroupIds);
     }
 
     public static List<Integer> getYearGroupIds(Context context){
@@ -233,12 +217,12 @@ public class GroupSelectActivity extends AppCompatActivity {
     }
 
 
-    private void saveIdsInPreferences(List<Integer> listIds) {
+    public static void saveIdsInPreferences(Context context,List<Integer> listIds) {
         JSONArray jsonArray = new JSONArray();
         for (Integer yearGroupId : listIds) {
             jsonArray.put(yearGroupId);
         }
-        PreferenceUtils.get(this).setDownloadedGroupYear(jsonArray.toString());
+        PreferenceUtils.get(context).setDownloadedGroupYear(jsonArray.toString());
     }
 
 

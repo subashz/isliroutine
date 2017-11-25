@@ -110,7 +110,7 @@ public class RoutineActivity extends AppCompatActivity {
 
     }
 
-    private void downloadTimeTable(int groupIndex) {
+    private void downloadTimeTable(final int groupIndex) {
         final Downloader downloader = new Downloader(this);
         downloader.setOnDownloadListener(new OnDownloadListener() {
             @Override
@@ -129,6 +129,28 @@ public class RoutineActivity extends AppCompatActivity {
             public void onSuccessfull() {
                 progressDoalog.dismiss();
                 init();
+                  AlertDialog alertDialog = new AlertDialog.Builder(RoutineActivity.this)
+                        .setTitle("Do you want to make "+ClassDataLab.get(RoutineActivity.this).getGroupName(String.valueOf(groupIndex))+" your default group")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                PreferenceUtils.get(RoutineActivity.this).setDefaultGroupYear(groupIndex);
+                                GroupSelectActivity.saveGroupId(RoutineActivity.this,groupIndex);
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                GroupSelectActivity.saveGroupId(RoutineActivity.this,groupIndex);
+                            }
+                        }).setCancelable(false).create();
+                  if(GroupSelectActivity.getYearGroupIds(RoutineActivity.this).size()!=0) {
+                      alertDialog.show();
+                  }else {
+                      PreferenceUtils.get(RoutineActivity.this).setDefaultGroupYear(groupIndex);
+                      GroupSelectActivity.saveGroupId(RoutineActivity.this,groupIndex);
+                  }
+
             }
 
 
@@ -164,6 +186,7 @@ public class RoutineActivity extends AppCompatActivity {
 
     }
 
+
     public void init() {
 
         groupSelectSpinner=(Spinner)findViewById(R.id.toolbar_group_select);
@@ -181,7 +204,8 @@ public class RoutineActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        ArrayAdapter<String> adapter= new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,groupsName);
+
+        ArrayAdapter<String> adapter= new ArrayAdapter<String>(this,R.layout.item_spinner_year_group,groupsName);
         groupSelectSpinner.setAdapter(adapter);
         previousSelectedIndex=groupsId.indexOf(groupIndex);
         groupSelectSpinner.setSelection(previousSelectedIndex);
@@ -205,7 +229,7 @@ public class RoutineActivity extends AppCompatActivity {
 
         NotificationService.setDailyRepeatingNotification(this, true);
 
-        viewPager.setOffscreenPageLimit(7);
+        viewPager.setOffscreenPageLimit(6);
         setupViewPager(mSectionsPagerAdapter,viewPager,groupIndex);
         viewPager.setAdapter(mSectionsPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -244,6 +268,7 @@ public class RoutineActivity extends AppCompatActivity {
                         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
                         setupViewPager(sectionsPagerAdapter, viewPager, groupsId.get(position));
                         viewPager.setAdapter(sectionsPagerAdapter);
+                        viewPager.setOffscreenPageLimit(6);
                         viewPager.setCurrentItem(day, true);
                         tabLayout.setupWithViewPager(viewPager);
                         previousSelectedIndex=position;

@@ -14,11 +14,15 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowDisablePreview">true</item>
-
     </style>
 
     <style name="SplashScreenTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/background_splash</item>
+    </style>
+
+    <style name="WhiteToolBar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:textColorSecondary">@color/colorPrimary</item>
+        <item name="android:background">#ffffff</item>
     </style>
 
 
