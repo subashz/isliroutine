@@ -1,4 +1,4 @@
-package tk.blankstudio.isliroutine.utils;
+package tk.blankstudio.isliroutine.download;
 
 import java.util.concurrent.TimeUnit;
 

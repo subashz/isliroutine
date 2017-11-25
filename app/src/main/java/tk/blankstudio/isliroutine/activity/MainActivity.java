@@ -20,13 +20,14 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
-          boolean isDataLoaded = PreferenceUtils.get(this).getGroupYearInitialized();
+        boolean isTimeTableInitialized = PreferenceUtils.get(this).getTimeTableInitialized();
 
         Intent intent;
-        if(isDataLoaded) {
+        if(isTimeTableInitialized) {
             intent = new Intent(this,RoutineActivity.class);
         }else {
             intent = new Intent(this,GroupSelectActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         }
         startActivity(intent);
         finish();

@@ -70,6 +70,7 @@ public class DbSchema {
             public static final String ROOM_ID = "room_id";
             public static final String LESSION_ID = "lession_id";
             public static final String TEACHER_ID = "teacher_id";
+            public static final String YEAR_GROUP_ID = "year_group_id";
             public static final String COURSE_ID = "course_id";
             public static final String START_HOUR = "start_hour";
             public static final String END_HOUR = "end_hour";

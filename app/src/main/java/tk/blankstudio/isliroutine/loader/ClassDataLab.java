@@ -60,7 +60,7 @@ public class ClassDataLab {
         DbHelper.addToTimeTable(mDatabase,timeTable);
     }
 
-    public List<TimeTable> getTimeTables() {return DbHelper.getTimeTable(mDatabase);}
+    public List<TimeTable> getTimeTables(int groupIndex) {return DbHelper.getTimeTable(mDatabase,groupIndex);}
 
     public void addToTeacher(Teacher teacher) {
         DbHelper.addToTeacher(mDatabase,teacher);
@@ -88,8 +88,8 @@ public class ClassDataLab {
 
     public String getGroupName(String uid) { return DbHelper.getYearGroup(mDatabase,uid).get(0).getGroup(); }
 
-    public List<IEvent> getEvents(String day) {
-        return DbHelper.getEvents(mContext,mDatabase,day);
+    public List<IEvent> getEvents(String day,int id) {
+        return DbHelper.getEvents(mContext,mDatabase,day,id);
     }
 
     public SQLiteDatabase getDatabase() {

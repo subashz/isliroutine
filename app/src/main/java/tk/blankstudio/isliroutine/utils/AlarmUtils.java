@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * Created by deadsec on 11/24/17.
+ * Class comprises alarm manager helper methods.
  */
 
 public class AlarmUtils {
@@ -62,15 +63,15 @@ public class AlarmUtils {
     }
 
     private static void saveAlarmId(Context context, int id) {
-        List<Integer> idsAlarms = getAlarmIds(context);
+        List<Integer> alarmIds = getAlarmIds(context);
 
-        if (idsAlarms.contains(id)) {
+        if (alarmIds.contains(id)) {
             return;
         }
 
-        idsAlarms.add(id);
+        alarmIds.add(id);
 
-        saveIdsInPreferences(context, idsAlarms);
+        saveIdsInPreferences(context, alarmIds);
     }
 
     private static void removeAlarmId(Context context, int id) {
@@ -100,9 +101,9 @@ public class AlarmUtils {
         return ids;
     }
 
-    private static void saveIdsInPreferences(Context context, List<Integer> lstIds) {
+    private static void saveIdsInPreferences(Context context, List<Integer> listIds) {
         JSONArray jsonArray = new JSONArray();
-        for (Integer idAlarm : lstIds) {
+        for (Integer idAlarm : listIds) {
             jsonArray.put(idAlarm);
         }
         PreferenceUtils.get(context).setAlarmIds(jsonArray.toString());

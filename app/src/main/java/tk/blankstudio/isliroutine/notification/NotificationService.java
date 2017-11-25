@@ -1,5 +1,6 @@
 package tk.blankstudio.isliroutine.notification;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -15,6 +16,7 @@ import tk.blankstudio.isliroutine.R;
 import tk.blankstudio.isliroutine.loader.ClassDataLab;
 import tk.blankstudio.isliroutine.model.ClassModel;
 import tk.blankstudio.isliroutine.utils.AlarmUtils;
+import tk.blankstudio.isliroutine.utils.PreferenceUtils;
 
 import com.framgia.library.calendardayview.data.IEvent;
 
@@ -57,7 +59,8 @@ public class NotificationService extends Service {
         String dayOfTheWeek = sdf.format(d).toUpperCase();
         Log.d(TAG, "handleTodayNotification: of date: hr:" + d.getHours() + " min:" + d.getMinutes() + " date:" + d.getDate() + "day: " + d.getDay());
 
-        List<IEvent> ivents = ClassDataLab.get(this).getEvents(dayOfTheWeek);
+        int groupId= PreferenceUtils.get(this).getDefaultGroupYear();
+        List<IEvent> ivents = ClassDataLab.get(this).getEvents(dayOfTheWeek,groupId);
         for (IEvent event : ivents) {
             scheduleNotification(this, (ClassModel) event);
         }
@@ -67,8 +70,8 @@ public class NotificationService extends Service {
      * This method sets the daily repeating scheduler. It sets the repeated alarm.
      * This method calls the NotificationReceiver.class at 2 o clock in morning . If time is passed,
      * it immediately executes. THis methods job is to make sure that the NotificationReceiver is called at least daily.
-     * @param context
-     * @param choice
+     * @param context Context
+     * @param choice whether to set daily repeating notification or not
      */
     public static void setDailyRepeatingNotification(Context context, boolean choice) {
         Intent  intent = new Intent(context, NotificationReceiver.class);
@@ -76,23 +79,18 @@ public class NotificationService extends Service {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 2);
         cal.set(Calendar.MINUTE, 0);
-        //PendingIntent pendingIntent = PendingIntent.getBroadcast(context, REQ_CODE_SET_DAILY_REPEATING, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
-        //AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        //am.cancel(pendingIntent);
         if (choice) {
-            //am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
             AlarmUtils.addRepeatingAlarm(context,intent,REQ_CODE_SET_DAILY_REPEATING,cal);
         } else {
             AlarmUtils.cancelAlarm(context,intent,REQ_CODE_SET_DAILY_REPEATING);
-            //am.cancel(pendingIntent);
        }
     }
 
     /**
      * This methods main task is to schedule the notification
      * It make sure that the class model start and endtime alarm is set.
-     * @param context
-     * @param classModel
+     * @param context Context
+     * @param classModel Classmodel
      */
     public void scheduleNotification(Context context, ClassModel classModel) {
 
@@ -116,9 +114,6 @@ public class NotificationService extends Service {
         endClassIntent.putExtra(NotificationPublisher.COURSE_NAME,classModel.getCourseName());
         endClassIntent.putExtra(NotificationPublisher.END_MINUTE, endMinute);
 
-        //PendingIntent pIStartClass = PendingIntent.getBroadcast(context, (uId + startHour) * startHour, startClassIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        //PendingIntent piEndClass = PendingIntent.getBroadcast(context, (uId + endHour) * endHour, endClassIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         Calendar startCal = Calendar.getInstance();
         startCal.set(Calendar.HOUR_OF_DAY, startHour);
         startCal.set(Calendar.MINUTE, startMinute);
@@ -131,18 +126,6 @@ public class NotificationService extends Service {
 
         AlarmUtils.addAlarm(context,endClassIntent,(uId+endHour)*endHour,endCal);
         AlarmUtils.addAlarm(context,startClassIntent,(uId+startHour)*startHour,startCal);
-//
-//        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//        alarmManager.cancel(piEndClass);
-//        alarmManager.cancel(pIStartClass);
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pIStartClass);
-//            alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal2.getTimeInMillis(), piEndClass);
-//        } else {
-//            alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pIStartClass);
-//            alarmManager.set(AlarmManager.RTC_WAKEUP, cal2.getTimeInMillis(), piEndClass);
-//        }
         Log.d("NotificationHandler", "Set Alarm at Time at: sh:" + startHour + " sm:" + startMinute + " eh:" + endHour + " em:" + endMinute);
     }
 

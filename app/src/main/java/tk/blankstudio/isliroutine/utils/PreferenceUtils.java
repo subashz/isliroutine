@@ -16,7 +16,8 @@ public class PreferenceUtils {
     public static PreferenceUtils mPreferenceUtils;
 
     public static final String GROUP_YEAR_INITIALIZED="group_year_initialized";
-    public static final String GROUP_YEAR="group_year";
+    public static final String DEFAULT_GROUP_YEAR="default_group_year";
+    public static final String DOWNLOADED_GROUP_YEAR="downloaded_group_year";
     public static final String TIME_TABLE_INITIALIZED="time_table_initialized";
     public static final String CLASS_NOTIFICATION_REMINDER="class_notifications";
     public static final String NOTIFICATION_VIBRATE="class_notification_vibrate";
@@ -52,12 +53,19 @@ public class PreferenceUtils {
         return mPreferences.getBoolean(TIME_TABLE_INITIALIZED,false);
     }
 
-    public void setGroupYear(int groupYear) {
-        mPreferences.edit().putInt(GROUP_YEAR,groupYear).commit();
+    public void setDefaultGroupYear(int groupYear) {
+        mPreferences.edit().putInt(DEFAULT_GROUP_YEAR,groupYear).commit();
     }
 
-    public int getGroupYear() {
-        return mPreferences.getInt(GROUP_YEAR,0);
+    public int getDefaultGroupYear() {
+        return mPreferences.getInt(DEFAULT_GROUP_YEAR,-1);
+    }
+
+    public String getDownloadedGroupYear() {
+        return mPreferences.getString(DOWNLOADED_GROUP_YEAR,"[]");
+    }
+    public void setDownloadedGroupYear(String ids) {
+        mPreferences.edit().putString(DOWNLOADED_GROUP_YEAR,ids).commit();
     }
 
     public boolean getAutoSilentMode() {

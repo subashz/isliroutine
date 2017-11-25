@@ -26,7 +26,6 @@ public class NotificationPublisher extends BroadcastReceiver {
     public static String CLASS_STATUS = "class_status";
     public static String CLASS_ENDING = "class_ending";
     public static String CLASS_STARTING = "class_starting";
-    public static final String NOTIFICATION = "notification";
     public static final String START_HOUR = "startHour";
     public static final String START_MINUTE = "startMinute";
     public static final String END_HOUR = "startHour";
@@ -46,15 +45,15 @@ public class NotificationPublisher extends BroadcastReceiver {
         Notification notification = getNotification(context,type,courseName);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (notificationManager.isNotificationPolicyAccessGranted()) {
-                setRingerMode(context,type);
+            if (notificationManager != null && notificationManager.isNotificationPolicyAccessGranted()) {
+                setRingerMode(context, type);
             }
         } else {
             setRingerMode(context,type);
         }
 
         Calendar cal = Calendar.getInstance();
-        if (PreferenceUtils.get(context).getClassNotificationReminder()) {
+        if (PreferenceUtils.get(context).getClassNotificationReminder() && notificationManager!=null) {
             if (type.equals(CLASS_STARTING) && startHour == cal.get(Calendar.HOUR_OF_DAY) && startMinute <= cal.get(Calendar.MINUTE)) {
                 notificationManager.cancel(id);
                 notificationManager.notify(id, notification);
@@ -75,8 +74,8 @@ public class NotificationPublisher extends BroadcastReceiver {
     }
 
     public void setRingerMode(Context context, String ringerMode) {
-        if(PreferenceUtils.get(context).getAutoSilentMode()) {
-            AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        if(PreferenceUtils.get(context).getAutoSilentMode() && audioManager!=null) {
             if (ringerMode.equals(CLASS_STARTING)) {
                 audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
             } else if (ringerMode.equals(CLASS_ENDING)) {
@@ -88,9 +87,9 @@ public class NotificationPublisher extends BroadcastReceiver {
 
     /**
      * This method returns the notifications
-     * @param context
-     * @param courseName
-     * @return
+     * @param context Context of the application
+     * @param courseName name of the course to show in notification
+     * @return Notification
      */
     public Notification getNotification(Context context, String type, String courseName) {
 

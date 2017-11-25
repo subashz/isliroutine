@@ -62,6 +62,7 @@ public class TableCreator extends SQLiteOpenHelper {
                         TimeTable.Cols.COURSE_ID + "," +
                         TimeTable.Cols.LESSION_ID + "," +
                         TimeTable.Cols.TEACHER_ID + "," +
+                        TimeTable.Cols.YEAR_GROUP_ID + "," +
                         TimeTable.Cols.ROOM_ID + "," +
                         TimeTable.Cols.DAYS + ", " +
                         " UNIQUE(" + TimeTable.Cols.ID + "))"

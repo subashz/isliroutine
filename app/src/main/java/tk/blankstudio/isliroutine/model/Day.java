@@ -13,4 +13,9 @@ public class Day {
     public static final String WEDNESDAY = "WED";
     public static final String THURSDAY = "THU";
     public static final String FRIDAY = "FRI";
+    public static final String Days[]={"SUN","MON","TUE","WED","THU","FRI"};
+
+    public static String getDay(int i) {
+        return Days[i];
+    }
 }

@@ -3,9 +3,11 @@ package tk.blankstudio.isliroutine.activity;
 import android.app.ActionBar;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class SettingsActivity extends PreferenceActivity{
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_notification);
+
         }
     }
 

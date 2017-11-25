@@ -25,5 +25,14 @@
         android:key="auto_silent_mode"
         android:summary="@string/pref_auto_silent_summary"
         android:title="@string/pref_auto_silent_title" />
+    <Preference android:title="Download Another Timetable" key="addTimeTable">
+        <intent
+            android:targetPackage="tk.blankstudio.isliroutine"
+            android:targetClass="tk.blankstudio.isliroutine.activity.GroupSelectActivity"
+            android:action="update_time_table"/>
+
+
+    </Preference>
+
 
 </PreferenceScreen>

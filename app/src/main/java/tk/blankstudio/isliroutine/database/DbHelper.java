@@ -84,6 +84,7 @@ public class DbHelper {
         values.put(DbSchema.TimeTable.Cols.START_HOUR, timeTable.getStartHour());
         values.put(DbSchema.TimeTable.Cols.START_MINUTE, timeTable.getStartMinute());
         values.put(DbSchema.TimeTable.Cols.TEACHER_ID, timeTable.getTeacherId());
+        values.put(DbSchema.TimeTable.Cols.YEAR_GROUP_ID, timeTable.getYearGroupId());
         db.insertWithOnConflict(DbSchema.TimeTable.NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
@@ -169,9 +170,9 @@ public class DbHelper {
         return teachers;
     }
 
-    public static List<TimeTable> getTimeTable(SQLiteDatabase db) {
+    public static List<TimeTable> getTimeTable(SQLiteDatabase db,int index) {
         List<TimeTable> timeTables = new ArrayList<>();
-        CustomCursorWrapper cursor = getCustomCursor(db, DbSchema.TimeTable.NAME, null, null);
+        CustomCursorWrapper cursor = getCustomCursor(db, DbSchema.TimeTable.NAME, "year_group_id="+index, null);
         try {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -208,7 +209,7 @@ public class DbHelper {
         return new CustomCursorWrapper(db.query(tableName, null, whereClause, whereArgs, null, null, null));
     }
 
-    public static List<IEvent> getEvents(Context context, SQLiteDatabase db, String day) {
+    public static List<IEvent> getEvents(Context context, SQLiteDatabase db, String day,int group_id) {
         List<IEvent> events = new ArrayList<>();
         String query = "select " +
                 "ti.uid, " +
@@ -226,7 +227,7 @@ public class DbHelper {
                 "inner join lession le on le.uid=ti.lession_id " +
                 "inner join teacher te on te.uid=ti.teacher_id " +
                 "inner join room ro on ro.uid=ti.room_id " +
-                "inner join all_course co on co.uid=ti.course_id where ti.days='"+day+"'";
+                "inner join all_course co on co.uid=ti.course_id where ti.days='"+day+"' and ti.year_group_id="+group_id;
         Log.d("QUERY:",query);
         Cursor cursor = db.rawQuery(query,null);
         DatabaseUtils.dumpCursorToString(cursor);

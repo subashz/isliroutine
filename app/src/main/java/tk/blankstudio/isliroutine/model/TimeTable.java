@@ -34,6 +34,16 @@ public class TimeTable {
     @SerializedName("updated_at")
     private String mUpdatedAt;
 
+    private int yearGroupId;
+
+    public int getYearGroupId() {
+        return yearGroupId;
+    }
+
+    public void setYearGroupId(int yearGroupId) {
+        this.yearGroupId = yearGroupId;
+    }
+
     public int getId() {
         return mId;
     }
@@ -82,7 +92,7 @@ public class TimeTable {
         return mUpdatedAt;
     }
 
-    public TimeTable(int id, int roomId, int lessionId, int teacherId, int courseId, int startHour, int endHour, int startMinute, int endMinute, String days, String createdAt, String updatedAt) {
+    public TimeTable(int id, int roomId, int lessionId, int teacherId, int courseId, int startHour, int endHour, int startMinute, int endMinute, String days, String createdAt, String updatedAt,int yearGroupId) {
         mId = id;
         mRoomId = roomId;
         mLessionId = lessionId;
@@ -95,5 +105,6 @@ public class TimeTable {
         mDays = days;
         mCreatedAt = createdAt;
         mUpdatedAt = updatedAt;
+        this.yearGroupId=yearGroupId;
     }
 }

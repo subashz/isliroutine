@@ -5,7 +5,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_routine">
         <![CDATA[
-        <font color=#ed3237>Isli</font> <font color=#3e4095>Routine</font>  <font color=#3e4095> %1$s </font>
+        <font color=#ed3237>Isli</font> <font color=#3e4095>Routine</font>  <font color=#3e4095></font>
         ]]>
     </string>
 

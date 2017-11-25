@@ -81,8 +81,9 @@ public class CustomCursorWrapper extends CursorWrapper {
         int mRoomId = getInt(getColumnIndex(DbSchema.TimeTable.Cols.ROOM_ID));
         int mTeacherId = getInt(getColumnIndex(DbSchema.TimeTable.Cols.TEACHER_ID));
         int mLessionId = getInt(getColumnIndex(DbSchema.TimeTable.Cols.LESSION_ID));
+        int mYearGroupId = getInt(getColumnIndex(DbSchema.TimeTable.Cols.YEAR_GROUP_ID));
 
-        return new TimeTable(id, mRoomId, mLessionId, mTeacherId, mCourseId, mStartHour, mEndHour, mStartMinute, mEndMinute, mDays, mCreatedAt, mUpdatedAt);
+        return new TimeTable(id, mRoomId, mLessionId, mTeacherId, mCourseId, mStartHour, mEndHour, mStartMinute, mEndMinute, mDays, mCreatedAt, mUpdatedAt,mYearGroupId);
     }
 
     public Course getCourse() {

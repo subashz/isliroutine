@@ -30,18 +30,20 @@ public class DailyClassFragment extends Fragment {
     public static final String TAG = "DailyClassFragment";
     public static final String ARG_DAY = "daily_class_day";
     public static final String ARG_DAY_ID = "daily_class_day_id";
-    public static final String GROUP_INDEX = "group_index";
+    public static final String ARG_GROUP_INDEX = "group_index";
     private int dayId;
+    private int groupId;
     private String day;
     CalendarDayView dayView;
     ProgressDialog progressDoalog;
     ConstraintLayout mConstraintLayout;
 
-    public static final DailyClassFragment newInstance(String day,int dayId) {
+    public static final DailyClassFragment newInstance(String day,int dayId,int groupId) {
         final DailyClassFragment instance = new DailyClassFragment();
         final Bundle args = new Bundle();
         args.putString(ARG_DAY, day);
         args.putInt(ARG_DAY_ID, dayId);
+        args.putInt(ARG_GROUP_INDEX, groupId);
         instance.setArguments(args);
         return instance;
     }
@@ -53,7 +55,9 @@ public class DailyClassFragment extends Fragment {
         if (args != null) {
             day = args.getString(ARG_DAY);
             dayId = args.getInt(ARG_DAY_ID);
+            groupId=args.getInt(ARG_GROUP_INDEX);
         }
+        Log.d(TAG, "onCreate: group Id is: "+groupId);
 
     }
 
@@ -87,6 +91,7 @@ public class DailyClassFragment extends Fragment {
                 });
 
         loadData();
+        Log.d(TAG, "onCreateView: loading data of: "+groupId+" of day "+day);
         return view;
     }
 
@@ -97,17 +102,21 @@ public class DailyClassFragment extends Fragment {
 
 
     public void loadData() {
+        Log.d(TAG, "loadData: called with group Id: "+groupId);
         LoaderManager.LoaderCallbacks<List<IEvent>> mLoaderCallbacks=new LoaderManager.LoaderCallbacks<List<IEvent>>() {
             @Override
             public Loader<List<IEvent>> onCreateLoader(int id, Bundle args) {
-                return new TimeTableLoader(getActivity(),day);
+                Log.d(TAG, "onCreateLoader: received args: "+id+" day is: "+day+" groupId : "+groupId);
+                return new TimeTableLoader(getActivity(),day,groupId);
             }
 
             @Override
             public void onLoadFinished(Loader<List<IEvent>> loader, List<IEvent> data) {
+                Log.d(TAG, "onLoadFinished: loaded data of:"+groupId);
                 dayView.setEvents(data);
+                dayView.refresh();
                 dayView.setLimitTime(data.get(0).getStartTime().getTime().getHours() - 2, data.get(data.size() - 1).getEndTime().getTime().getHours() + 2);
-                mConstraintLayout.setVisibility(View.GONE);
+                mConstraintLayout.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -115,7 +124,8 @@ public class DailyClassFragment extends Fragment {
 
             }
         };
-        getActivity().getSupportLoaderManager().initLoader(dayId,null,mLoaderCallbacks);
+        getLoaderManager().initLoader(dayId,null,mLoaderCallbacks);
+
     }
 
 }

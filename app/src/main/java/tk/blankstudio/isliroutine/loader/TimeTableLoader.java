@@ -2,6 +2,7 @@ package tk.blankstudio.isliroutine.loader;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 import com.framgia.library.calendardayview.data.IEvent;
 
@@ -13,11 +14,13 @@ import java.util.List;
 
 public class TimeTableLoader extends AsyncTaskLoader<List<IEvent>> {
    private String day;
-   List<IEvent> cachedData;
+   private int groupId;
+   public static final String TAG=TimeTableLoader.class.getSimpleName();
 
-    public TimeTableLoader(Context context,String day) {
+    public TimeTableLoader(Context context,String day,int groupId) {
         super(context);
         this.day=day;
+        this.groupId=groupId;
     }
 
     @Override
@@ -27,6 +30,7 @@ public class TimeTableLoader extends AsyncTaskLoader<List<IEvent>> {
 
     @Override
     public List<IEvent> loadInBackground() {
-        return ClassDataLab.get(getContext()).getEvents(day);
+        Log.d(TAG, "loadInBackground: geting data of groupId:"+groupId+" of day:"+day);
+        return ClassDataLab.get(getContext()).getEvents(day,groupId);
     }
 }
