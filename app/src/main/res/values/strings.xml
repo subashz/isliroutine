@@ -3,6 +3,7 @@
     <string name="title_activity_main">IsliRoutine</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="title_about">About this Apps</string>
     <string name="title_activity_routine">
         <![CDATA[
         <font color=#ed3237>Isli</font> <font color=#3e4095>Routine</font>  <font color=#3e4095></font>
@@ -26,6 +27,14 @@
     <string name="enable_wifi_text">Please enable wifi/data connection to download the schedule.</string>
     <string name="no_internet_text">No Internet</string>
     <string name="group_select_note">Note: This app is still in alpha release. </string>
+    <string name="about_text">
+        <![CDATA[
+   <h2><span style="color: #003366;"><strong>&nbsp;</strong></span></h2>
+<p style="text-align: center;"><span style="color: #003366;">/**</span></p>
+<p style="text-align: center;"><span style="color: #003366;"><strong>This application is still in the early stage.It was developed when similar apps didnot logged in. All the routines are upstreamed from the official college website. It will be updated every week until I graduate.</strong></span><br /><br /><span style="text-decoration: underline; color: #003366;"><span><strong>Future Feature</strong></span></span><br /><span style="color: #003366;">*Set offset Alarm before class begins or ends</span><br /><span style="color: #003366;">*Google classroom integration [WIP]</span><br /><span style="color: #003366;">*College notification board</span><br /><span style="color: #003366;">*Widgets</span><br /><br /><br /><span style="color: #003366;"><em><strong>&nbsp; &nbsp; For any bug report / feature request, Send mail at blacpythoz@gmail.com. If you want to contribute on this project, feel free to contact me. I am happy to share code with you</strong></em></span></p>
+<p style="text-align: center;"><span style="color: #003366;"><em><strong>**/</strong></em></span></p>
+    ]]>
+    </string>
 
 
 </resources>

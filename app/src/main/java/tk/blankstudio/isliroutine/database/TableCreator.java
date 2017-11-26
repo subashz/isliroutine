@@ -65,7 +65,7 @@ public class TableCreator extends SQLiteOpenHelper {
                         TimeTable.Cols.YEAR_GROUP_ID + "," +
                         TimeTable.Cols.ROOM_ID + "," +
                         TimeTable.Cols.DAYS + ", " +
-                        " UNIQUE(" + TimeTable.Cols.ID + "))"
+                        " UNIQUE(" + TimeTable.Cols.ID + ","+TimeTable.Cols.YEAR_GROUP_ID+"))"
         );
     }
 

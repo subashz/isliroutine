@@ -33,10 +33,14 @@
     </Preference>
     <Preference
         android:title="About"
-        android:summary="Information about this application"
-        android:enabled="true"
-        style="?android:preferenceInformationStyle"
-        key="about" />
+        key="about"
+        >
+      <intent
+            android:targetPackage="tk.blankstudio.isliroutine"
+            android:targetClass="tk.blankstudio.isliroutine.activity.AboutActivity"
+            android:action="update_time_table"/>
+    </Preference>
+
 
 
 </PreferenceScreen>

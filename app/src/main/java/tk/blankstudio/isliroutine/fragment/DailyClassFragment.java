@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import tk.blankstudio.isliroutine.loader.TimeTableLoader;
@@ -37,6 +39,9 @@ public class DailyClassFragment extends Fragment {
     CalendarDayView dayView;
     ProgressDialog progressDoalog;
     ConstraintLayout mConstraintLayout;
+    ProgressBar downloadingProgressBar;
+    TextView noClassText;
+
 
     public static final DailyClassFragment newInstance(String day,int dayId,int groupId) {
         final DailyClassFragment instance = new DailyClassFragment();
@@ -69,6 +74,8 @@ public class DailyClassFragment extends Fragment {
         dayView = (CalendarDayView) view.findViewById(R.id.calendar);
         dayView.setDecorator(new CustomDecoration(getActivity()));
         mConstraintLayout = view.findViewById(R.id.progressContainer);
+        downloadingProgressBar=view.findViewById(R.id.downloading_progress_bar);
+        noClassText=view.findViewById(R.id.no_class_text);
 
 
         ((CustomDecoration) (dayView.getDecoration())).setOnEventClickListener(
@@ -115,8 +122,13 @@ public class DailyClassFragment extends Fragment {
                 Log.d(TAG, "onLoadFinished: loaded data of:"+groupId);
                 dayView.setEvents(data);
                 dayView.refresh();
-                dayView.setLimitTime(data.get(0).getStartTime().getTime().getHours() - 2, data.get(data.size() - 1).getEndTime().getTime().getHours() + 2);
-                mConstraintLayout.setVisibility(View.INVISIBLE);
+                if(!data.isEmpty()) {
+                    dayView.setLimitTime(data.get(0).getStartTime().getTime().getHours() - 2, data.get(data.size() - 1).getEndTime().getTime().getHours() + 2);
+                    mConstraintLayout.setVisibility(View.INVISIBLE);
+                }else {
+                    downloadingProgressBar.setVisibility(View.INVISIBLE);
+                    noClassText.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override

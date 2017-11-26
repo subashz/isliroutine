@@ -45,6 +45,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="tk.blankstudio.isliroutine.activity.RoutineActivity" />
         </activity>
+
+        <activity
+            android:name=".activity.AboutActivity"
+            android:label="@string/title_about"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".activity.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="tk.blankstudio.isliroutine.activity.SettingsActivity" />
+        </activity>
+
+
         <service android:name=".notification.NotificationService" android:label="Set Daily Notification alarm Service">
             <intent-filter>
                 <action android:name="tk.blankstudio.isliroutine.notification.NotificationService"/>

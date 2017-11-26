@@ -76,7 +76,7 @@ public class RoutineActivity extends AppCompatActivity {
     private boolean downloadStatus;
     private int firstTimeCheckOnItemSelected;
     private int previousSelectedIndex;
-    DailyClassFragment mDailyClassFragment[]=new DailyClassFragment[6];
+    DailyClassFragment mDailyClassFragment[] = new DailyClassFragment[6];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,14 +91,14 @@ public class RoutineActivity extends AppCompatActivity {
         groupIndex = getIntent().getIntExtra("GROUPINDEX", -1);
         if (groupIndex == -1) {
             groupIndex = PreferenceUtils.get(this).getDefaultGroupYear();
-            if(groupIndex==-1) {
-                startActivity(new Intent(this,GroupSelectActivity.class));
+            if (groupIndex == -1) {
+                startActivity(new Intent(this, GroupSelectActivity.class));
                 finish();
             }
-        }else {
+        } else {
             // this is true, when the group select activity passes the group index
             // this happens only for the new routine to download
-           downloadStatus=true;
+            downloadStatus = true;
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -130,8 +130,8 @@ public class RoutineActivity extends AppCompatActivity {
             @Override
             public void onSuccessfull() {
                 progressDoalog.dismiss();
-                  AlertDialog alertDialog = new AlertDialog.Builder(RoutineActivity.this)
-                        .setTitle("Do you want to make "+ClassDataLab.get(RoutineActivity.this).getGroupName(String.valueOf(groupIndex))+" your default group")
+                AlertDialog alertDialog = new AlertDialog.Builder(RoutineActivity.this)
+                        .setTitle("Do you want to make " + ClassDataLab.get(RoutineActivity.this).getGroupName(String.valueOf(groupIndex)) + " your default group")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -139,24 +139,27 @@ public class RoutineActivity extends AppCompatActivity {
                                 //new schedule alarms are added when init() gets called
                                 AlarmUtils.cancelAllAlarms(RoutineActivity.this);
                                 PreferenceUtils.get(RoutineActivity.this).setDefaultGroupYear(groupIndex);
-                                YearGroupUtils.saveGroupId(RoutineActivity.this,groupIndex);
+                                YearGroupUtils.saveGroupId(RoutineActivity.this, groupIndex);
                                 init();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                YearGroupUtils.saveGroupId(RoutineActivity.this,groupIndex);
+                                YearGroupUtils.saveGroupId(RoutineActivity.this, groupIndex);
                                 init();
                             }
                         }).setCancelable(false).create();
-                  if(YearGroupUtils.getYearGroupIds(RoutineActivity.this).size()!=0) {
-                      alertDialog.show();
-                  }else {
-                      PreferenceUtils.get(RoutineActivity.this).setDefaultGroupYear(groupIndex);
-                      YearGroupUtils.saveGroupId(RoutineActivity.this,groupIndex);
-                      init();
-                  }
+
+                // if there is no downloaded groups then make this default
+                // else show the alert box to make this default
+                if (!YearGroupUtils.getYearGroupIds(RoutineActivity.this).isEmpty()) {
+                    alertDialog.show();
+                } else {
+                    PreferenceUtils.get(RoutineActivity.this).setDefaultGroupYear(groupIndex);
+                    YearGroupUtils.saveGroupId(RoutineActivity.this, groupIndex);
+                    init();
+                }
 
             }
 
@@ -177,7 +180,7 @@ public class RoutineActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 ApiClient.getOkHttpClient().dispatcher().cancelAll();
-                               downloader.retryLoadTimeTable();
+                                downloader.retryLoadTimeTable();
                             }
                         }).create();
                 progressDoalog.dismiss();
@@ -187,7 +190,17 @@ public class RoutineActivity extends AppCompatActivity {
 
             @Override
             public void noInternet() {
-
+                AlertDialog dialog = new AlertDialog.Builder(RoutineActivity.this)
+                        .setMessage(getString(R.string.enable_wifi_text))
+                        .setTitle(getString(R.string.no_internet_text))
+                        .setNeutralButton(getString(R.string.go_to_setting_text), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent i = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                                startActivity(i);
+                            }
+                        }).create();
+                dialog.show();
             }
         }).loadTimeTable(groupIndex);
 
@@ -196,14 +209,14 @@ public class RoutineActivity extends AppCompatActivity {
 
     public void init() {
 
-        groupSelectSpinner=(Spinner)findViewById(R.id.toolbar_group_select);
+        groupSelectSpinner = (Spinner) findViewById(R.id.toolbar_group_select);
 
-        final List<String> groupsName=new ArrayList<>();
-        final List<Integer> groupsId=new ArrayList<>();
+        final List<String> groupsName = new ArrayList<>();
+        final List<Integer> groupsId = new ArrayList<>();
 
         try {
-            JSONArray groups= new JSONArray(PreferenceUtils.get(this).getDownloadedGroupYear());
-            for(int i=0;i<groups.length();i++) {
+            JSONArray groups = new JSONArray(PreferenceUtils.get(this).getDownloadedGroupYear());
+            for (int i = 0; i < groups.length(); i++) {
                 groupsName.add(ClassDataLab.get(this).getGroupName(String.valueOf(groups.getInt(i))));
                 groupsId.add(groups.getInt(i));
             }
@@ -212,9 +225,9 @@ public class RoutineActivity extends AppCompatActivity {
         }
 
 
-        ArrayAdapter<String> adapter= new ArrayAdapter<String>(this,R.layout.item_spinner_year_group,groupsName);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.item_spinner_year_group, groupsName);
         groupSelectSpinner.setAdapter(adapter);
-        previousSelectedIndex=groupsId.indexOf(groupIndex);
+        previousSelectedIndex = groupsId.indexOf(groupIndex);
         groupSelectSpinner.setSelection(previousSelectedIndex);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -237,7 +250,7 @@ public class RoutineActivity extends AppCompatActivity {
         NotificationService.setDailyRepeatingNotification(this, true);
 
         viewPager.setOffscreenPageLimit(6);
-        setupViewPager(mSectionsPagerAdapter,viewPager,groupIndex);
+        setupViewPager(mSectionsPagerAdapter, viewPager, groupIndex);
         viewPager.setAdapter(mSectionsPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
         Calendar calendar = Calendar.getInstance();
@@ -266,11 +279,11 @@ public class RoutineActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // re setup the view pager
-                if(++firstTimeCheckOnItemSelected>1) {
+                if (++firstTimeCheckOnItemSelected > 1) {
                     // fucked up logic
                     // kam chalu matra ho yo code.. // it just reloads all viewpager, tablayout and feels like a refresh layout
                     // bholi... :)
-                    if(previousSelectedIndex!=position) {
+                    if (previousSelectedIndex != position) {
                         removeAllFragment();
                         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
                         setupViewPager(sectionsPagerAdapter, viewPager, groupsId.get(position));
@@ -278,7 +291,7 @@ public class RoutineActivity extends AppCompatActivity {
                         viewPager.setOffscreenPageLimit(6);
                         viewPager.setCurrentItem(day, true);
                         tabLayout.setupWithViewPager(viewPager);
-                        previousSelectedIndex=position;
+                        previousSelectedIndex = position;
                     }
 
                     Log.d(TAG, "onItemSelected: item is: " + groupsId.get(position) + " group is: " + groupsName.get(position));
@@ -293,20 +306,21 @@ public class RoutineActivity extends AppCompatActivity {
         });
     }
 
-    private void setupViewPager(SectionsPagerAdapter sectionsPagerAdapter,ViewPager viewPager,int groupIndex) {
+    private void setupViewPager(SectionsPagerAdapter sectionsPagerAdapter, ViewPager viewPager, int groupIndex) {
         Log.d(TAG, "setupViewPager: Setting view pager");
         sectionsPagerAdapter.notifyDataSetChanged();
-        for(int i=0;i<6;i++) {
-            DailyClassFragment dailyClassFragment=DailyClassFragment.newInstance(Day.getDay(i),i,groupIndex);
-            sectionsPagerAdapter.addFragment(dailyClassFragment,Day.getDay(i));
-            mDailyClassFragment[i]=dailyClassFragment;
+        for (int i = 0; i < 6; i++) {
+            DailyClassFragment dailyClassFragment = DailyClassFragment.newInstance(Day.getDay(i), i, groupIndex);
+            sectionsPagerAdapter.addFragment(dailyClassFragment, Day.getDay(i));
+            mDailyClassFragment[i] = dailyClassFragment;
         }
     }
+
     private void removeAllFragment() {
         Log.d(TAG, "removeAllFragment: ");
-         for(int i=0;i<6;i++) {
+        for (int i = 0; i < 6; i++) {
             getSupportFragmentManager().beginTransaction().remove(mDailyClassFragment[i]).commit();
-            mDailyClassFragment[i]=null;
+            mDailyClassFragment[i] = null;
         }
     }
 
