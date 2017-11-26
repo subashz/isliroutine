@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import tk.blankstudio.isliroutine.notification.NotificationPublisher;
+import tk.blankstudio.isliroutine.notification.NotificationReceiver;
+import tk.blankstudio.isliroutine.notification.NotificationService;
+
 /**
  * Created by deadsec on 11/24/17.
  * Class comprises alarm manager helper methods.
@@ -52,9 +56,18 @@ public class AlarmUtils {
         removeAlarmId(context, notificationId);
     }
 
-    public static void cancelAllAlarms(Context context, Intent intent) {
+    public static void cancelAllAlarms(Context context) {
+        // for the normal notification setter intent
+        Intent intent1=new Intent(context, NotificationPublisher.class);
+        //for the daily repeating setting intent
+        Intent intent2 = new Intent(context, NotificationReceiver.class);
         for (int idAlarm : getAlarmIds(context)) {
-            cancelAlarm(context, intent, idAlarm);
+            // also remove the repeating daily scheduling alarm
+            if(idAlarm==NotificationService.REQ_CODE_SET_DAILY_REPEATING) {
+                cancelAlarm(context,intent2,idAlarm);
+            }else {
+                cancelAlarm(context, intent1, idAlarm);
+            }
         }
     }
 

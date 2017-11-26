@@ -45,6 +45,7 @@ import tk.blankstudio.isliroutine.fragment.DailyClassFragment;
 import tk.blankstudio.isliroutine.model.Day;
 import tk.blankstudio.isliroutine.download.Downloader;
 import tk.blankstudio.isliroutine.download.OnDownloadListener;
+import tk.blankstudio.isliroutine.utils.AlarmUtils;
 import tk.blankstudio.isliroutine.utils.PreferenceUtils;
 import tk.blankstudio.isliroutine.notification.NotificationService;
 
@@ -60,6 +61,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.fabric.sdk.android.Fabric;
+import tk.blankstudio.isliroutine.utils.YearGroupUtils;
 
 public class RoutineActivity extends AppCompatActivity {
 
@@ -128,27 +130,32 @@ public class RoutineActivity extends AppCompatActivity {
             @Override
             public void onSuccessfull() {
                 progressDoalog.dismiss();
-                init();
                   AlertDialog alertDialog = new AlertDialog.Builder(RoutineActivity.this)
                         .setTitle("Do you want to make "+ClassDataLab.get(RoutineActivity.this).getGroupName(String.valueOf(groupIndex))+" your default group")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                // this cancels all the previous notification alarms and
+                                //new schedule alarms are added when init() gets called
+                                AlarmUtils.cancelAllAlarms(RoutineActivity.this);
                                 PreferenceUtils.get(RoutineActivity.this).setDefaultGroupYear(groupIndex);
-                                GroupSelectActivity.saveGroupId(RoutineActivity.this,groupIndex);
+                                YearGroupUtils.saveGroupId(RoutineActivity.this,groupIndex);
+                                init();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                GroupSelectActivity.saveGroupId(RoutineActivity.this,groupIndex);
+                                YearGroupUtils.saveGroupId(RoutineActivity.this,groupIndex);
+                                init();
                             }
                         }).setCancelable(false).create();
-                  if(GroupSelectActivity.getYearGroupIds(RoutineActivity.this).size()!=0) {
+                  if(YearGroupUtils.getYearGroupIds(RoutineActivity.this).size()!=0) {
                       alertDialog.show();
                   }else {
                       PreferenceUtils.get(RoutineActivity.this).setDefaultGroupYear(groupIndex);
-                      GroupSelectActivity.saveGroupId(RoutineActivity.this,groupIndex);
+                      YearGroupUtils.saveGroupId(RoutineActivity.this,groupIndex);
+                      init();
                   }
 
             }

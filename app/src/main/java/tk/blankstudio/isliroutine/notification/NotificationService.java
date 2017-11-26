@@ -50,7 +50,7 @@ public class NotificationService extends Service {
 
 
     /**
-     * This method handles the today notifation. It gets todays course timetable and
+     * This method handles the today notification. It gets todays course timetable and
      * sets the schedule for specific time
      */
     public void handleTodayNotification() {
