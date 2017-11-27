@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by deadsec on 11/8/17.
+ * mapping to the retrofit responze and the internal database
  */
 
 public class Lession {

@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by deadsec on 11/8/17.
+ * db mapping
  */
 
 public class Course {

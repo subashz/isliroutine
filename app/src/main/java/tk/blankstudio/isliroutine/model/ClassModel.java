@@ -12,6 +12,8 @@ import java.util.Random;
 
 /**
  * Created by deadsec on 10/30/17.
+ * this model is for the class event mapping in the item_fragments
+ * this stores the info to be displayed in the ui
  */
 
 public class ClassModel implements IEvent {
