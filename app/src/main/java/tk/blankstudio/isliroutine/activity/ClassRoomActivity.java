@@ -19,10 +19,10 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.classroom.ClassroomScopes;
 
 import com.google.api.services.classroom.model.*;
+import com.google.api.services.classroom.model.Course;
 
 import android.Manifest;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -33,14 +33,12 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -50,12 +48,20 @@ import java.util.List;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+import tk.blankstudio.isliroutine.R;
+import tk.blankstudio.isliroutine.database.DataLab;
+import tk.blankstudio.isliroutine.model.*;
+import tk.blankstudio.isliroutine.routinedownload.OnDownloadListener;
+import tk.blankstudio.isliroutine.utils.GoogleClassRoomHelper;
+import tk.blankstudio.isliroutine.utils.MiscUtils;
+import tk.blankstudio.isliroutine.utils.PreferenceUtils;
 
 public class ClassRoomActivity extends AppCompatActivity
         implements EasyPermissions.PermissionCallbacks {
+    public static final String TAG = ClassRoomActivity.class.getSimpleName();
     GoogleAccountCredential mCredential;
     private TextView mOutputText;
-    private Button mCallApiButton;
+    private Button classRoomSignInButton;
     ProgressDialog mProgress;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
@@ -63,8 +69,6 @@ public class ClassRoomActivity extends AppCompatActivity
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
-    private static final String BUTTON_TEXT = "Call Classroom API";
-    private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = {ClassroomScopes.CLASSROOM_COURSES_READONLY};
 
     /**
@@ -75,44 +79,21 @@ public class ClassRoomActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LinearLayout activityLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        activityLayout.setLayoutParams(lp);
-        activityLayout.setOrientation(LinearLayout.VERTICAL);
-        activityLayout.setPadding(16, 16, 16, 16);
-
-        ViewGroup.LayoutParams tlp = new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        mCallApiButton = new Button(this);
-        mCallApiButton.setText(BUTTON_TEXT);
-        mCallApiButton.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_class_room);
+        classRoomSignInButton = findViewById(R.id.btn_login_google);
+        classRoomSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCallApiButton.setEnabled(false);
+                classRoomSignInButton.setEnabled(false);
                 mOutputText.setText("");
                 getResultsFromApi();
-                mCallApiButton.setEnabled(true);
+                classRoomSignInButton.setEnabled(true);
             }
         });
-        activityLayout.addView(mCallApiButton);
 
-        mOutputText = new TextView(this);
-        mOutputText.setLayoutParams(tlp);
-        mOutputText.setPadding(16, 16, 16, 16);
-        mOutputText.setVerticalScrollBarEnabled(true);
-        mOutputText.setMovementMethod(new ScrollingMovementMethod());
-        mOutputText.setText(
-                "Click the \'" + BUTTON_TEXT + "\' button to test the API.");
-        activityLayout.addView(mOutputText);
-
+        mOutputText = findViewById(R.id.tv_class_room_result);
         mProgress = new ProgressDialog(this);
-        mProgress.setMessage("Calling Classroom API ...");
-
-        setContentView(activityLayout);
+        mProgress.setMessage("Getting classroom courses ...");
 
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
@@ -129,14 +110,59 @@ public class ClassRoomActivity extends AppCompatActivity
      * appropriate.
      */
     private void getResultsFromApi() {
-        if (!isGooglePlayServicesAvailable()) {
-            acquireGooglePlayServices();
+        if (!MiscUtils.isGooglePlayServicesAvailable(this)) {
+            MiscUtils.acquireGooglePlayServices(this);
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
-        } else if (!isDeviceOnline()) {
+        } else if (!MiscUtils.isDeviceOnline(this)) {
             mOutputText.setText("No network connection available.");
         } else {
-            new MakeRequestTask(mCredential).execute();
+            //new MakeRequestTask(mCredential).execute();
+            GoogleClassRoomHelper helper = new GoogleClassRoomHelper(this);
+            helper.setOnDownloadListener(new OnDownloadListener() {
+                @Override
+                public void onStart() {
+                    mOutputText.setText("");
+                    mProgress.show();
+                }
+
+                @Override
+                public void onRetry() {
+
+                }
+
+                @Override
+                public void onSuccessfull() {
+                    mProgress.hide();
+                    updateUI();
+                }
+
+                @Override
+                public void onFailure(Throwable mLastError) {
+                    if (mLastError != null) {
+                        if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
+                            MiscUtils.showGooglePlayServicesAvailabilityErrorDialog(ClassRoomActivity.this,
+                                    ((GooglePlayServicesAvailabilityIOException) mLastError)
+                                            .getConnectionStatusCode());
+                        } else if (mLastError instanceof UserRecoverableAuthIOException) {
+                            startActivityForResult(
+                                    ((UserRecoverableAuthIOException) mLastError).getIntent(),
+                                    ClassRoomActivity.REQUEST_AUTHORIZATION);
+                        } else {
+                            mOutputText.setText("The following error occurred:\n"
+                                    + mLastError.getMessage());
+                        }
+                    } else {
+                        mOutputText.setText("Login process has been cancelled.");
+                    }
+                }
+
+                @Override
+                public void noInternet() {
+
+                }
+            });
+            helper.downloadCourse();
         }
     }
 
@@ -154,8 +180,9 @@ public class ClassRoomActivity extends AppCompatActivity
     private void chooseAccount() {
         if (EasyPermissions.hasPermissions(
                 this, Manifest.permission.GET_ACCOUNTS)) {
-            String accountName = getPreferences(Context.MODE_PRIVATE)
-                    .getString(PREF_ACCOUNT_NAME, null);
+            //String accountName = getPreferences(Context.MODE_PRIVATE)
+            //.getString(PREF_ACCOUNT_NAME, null);
+            String accountName = PreferenceUtils.get(this).getUserAccount();
             if (accountName != null) {
                 mCredential.setSelectedAccountName(accountName);
                 getResultsFromApi();
@@ -206,11 +233,7 @@ public class ClassRoomActivity extends AppCompatActivity
                     String accountName =
                             data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
-                        SharedPreferences settings =
-                                getPreferences(Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putString(PREF_ACCOUNT_NAME, accountName);
-                        editor.apply();
+                        PreferenceUtils.get(this).setUserAccount(accountName);
                         mCredential.setSelectedAccountName(accountName);
                         getResultsFromApi();
                     }
@@ -270,153 +293,20 @@ public class ClassRoomActivity extends AppCompatActivity
 
     /**
      * Checks whether the device currently has a network connection.
-     *
      * @return true if the device has a network connection, false otherwise.
      */
-    private boolean isDeviceOnline() {
-        ConnectivityManager connMgr =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
-    }
 
-    /**
-     * Check that Google Play services APK is installed and up to date.
-     *
-     * @return true if Google Play Services is available and up to
-     * date on this device; false otherwise.
-     */
-    private boolean isGooglePlayServicesAvailable() {
-        GoogleApiAvailability apiAvailability =
-                GoogleApiAvailability.getInstance();
-        final int connectionStatusCode =
-                apiAvailability.isGooglePlayServicesAvailable(this);
-        return connectionStatusCode == ConnectionResult.SUCCESS;
-    }
 
-    /**
-     * Attempt to resolve a missing, out-of-date, invalid or disabled Google
-     * Play Services installation via a user dialog, if possible.
-     */
-    private void acquireGooglePlayServices() {
-        GoogleApiAvailability apiAvailability =
-                GoogleApiAvailability.getInstance();
-        final int connectionStatusCode =
-                apiAvailability.isGooglePlayServicesAvailable(this);
-        if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
-            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
+    public void updateUI() {
+        classRoomSignInButton.setVisibility(View.INVISIBLE);
+        ListView listView = (ListView)findViewById(R.id.lv_class_room_course_list);
+        List<ClassRoomCourse> classRoomCourses = DataLab.get(this).getClassRoomCourse();
+        List<String> courses = new ArrayList<>();
+        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,courses);
+        for (ClassRoomCourse k : classRoomCourses) {
+            courses.add(k.getName());
+            Log.d(TAG, "updateUI: from database: " + k.getName());
         }
-    }
-
-
-    /**
-     * Display an error dialog showing that Google Play Services is missing
-     * or out of date.
-     *
-     * @param connectionStatusCode code describing the presence (or lack of)
-     *                             Google Play Services on this device.
-     */
-    void showGooglePlayServicesAvailabilityErrorDialog(
-            final int connectionStatusCode) {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        Dialog dialog = apiAvailability.getErrorDialog(
-                ClassRoomActivity.this,
-                connectionStatusCode,
-                REQUEST_GOOGLE_PLAY_SERVICES);
-        dialog.show();
-    }
-
-    /**
-     * An asynchronous task that handles the Classroom API call.
-     * Placing the API calls in their own task ensures the UI stays responsive.
-     */
-    private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
-        private com.google.api.services.classroom.Classroom mService = null;
-        private Exception mLastError = null;
-
-        MakeRequestTask(GoogleAccountCredential credential) {
-            HttpTransport transport = AndroidHttp.newCompatibleTransport();
-            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-            mService = new com.google.api.services.classroom.Classroom.Builder(
-                    transport, jsonFactory, credential)
-                    .setApplicationName("Classroom API Android Quickstart")
-                    .build();
-        }
-
-        /**
-         * Background task to call Classroom API.
-         *
-         * @param params no parameters needed for this task.
-         */
-        @Override
-        protected List<String> doInBackground(Void... params) {
-            try {
-                return getDataFromApi();
-            } catch (Exception e) {
-                mLastError = e;
-                cancel(true);
-                return null;
-            }
-        }
-
-        /**
-         * Fetch a list of the names of the first 10 courses the user has access to.
-         *
-         * @return List course names, or a simple error message if no courses are
-         * found.
-         * @throws IOException
-         */
-        private List<String> getDataFromApi() throws IOException {
-            ListCoursesResponse response = mService.courses().list()
-                    .setPageSize(10)
-                    .execute();
-            List<Course> courses = response.getCourses();
-            List<String> names = new ArrayList<String>();
-            if (courses != null) {
-                for (Course course : courses) {
-                    names.add(course.getName());
-                }
-            }
-            return names;
-        }
-
-
-        @Override
-        protected void onPreExecute() {
-            mOutputText.setText("");
-            mProgress.show();
-        }
-
-        @Override
-        protected void onPostExecute(List<String> output) {
-            mProgress.hide();
-            if (output == null || output.size() == 0) {
-                mOutputText.setText("No results returned.");
-            } else {
-                output.add(0, "Data retrieved using the Classroom API:");
-                mOutputText.setText(TextUtils.join("\n", output));
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mProgress.hide();
-            if (mLastError != null) {
-                if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
-                    showGooglePlayServicesAvailabilityErrorDialog(
-                            ((GooglePlayServicesAvailabilityIOException) mLastError)
-                                    .getConnectionStatusCode());
-                } else if (mLastError instanceof UserRecoverableAuthIOException) {
-                    startActivityForResult(
-                            ((UserRecoverableAuthIOException) mLastError).getIntent(),
-                            ClassRoomActivity.REQUEST_AUTHORIZATION);
-                } else {
-                    mOutputText.setText("The following error occurred:\n"
-                            + mLastError.getMessage());
-                }
-            } else {
-                mOutputText.setText("Request cancelled.");
-            }
-        }
+        listView.setAdapter(arrayAdapter);
     }
 }

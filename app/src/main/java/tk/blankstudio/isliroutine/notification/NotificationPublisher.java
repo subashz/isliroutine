@@ -75,10 +75,13 @@ public class NotificationPublisher extends BroadcastReceiver {
 
     public void setRingerMode(Context context, String ringerMode) {
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        Log.d(TAG, "before audiomanager: "+ringerMode);
         if(PreferenceUtils.get(context).getAutoSilentMode() && audioManager!=null) {
             if (ringerMode.equals(CLASS_STARTING)) {
-                audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                Log.d(TAG, "setRingerMode: "+ringerMode);
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
             } else if (ringerMode.equals(CLASS_ENDING)) {
+                Log.d(TAG, "setRingerMode: "+ringerMode);
                 audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
             }
         }

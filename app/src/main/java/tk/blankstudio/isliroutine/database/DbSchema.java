@@ -98,4 +98,23 @@ public class DbSchema {
         }
     }
 
+    public static final class ClassRoomCourse {
+        public static final String NAME="class_room_course";
+        public static final class Cols {
+            public static final String NAME="name";
+            public static final String ID="id";
+            public static final String COURSE_STATE="course_state";
+            public static final String DESCRIPTION="description";
+            public static final String ENROLLMENT_CODE="enrollment_code";
+            public static final String SECTION="section";
+            public static final String DESCRIPTIONHEADING="descriptionHeading";
+            public static final String ALTERNATE_LINK="alternate_link";
+            public static final String GOOGLE_DRIVE_LINK="google_drive_link";
+
+
+        }
+
+
+    }
+
 }

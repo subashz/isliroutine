@@ -2,15 +2,12 @@ package tk.blankstudio.isliroutine.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,27 +15,18 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-
 import tk.blankstudio.isliroutine.R;
-import tk.blankstudio.isliroutine.download.Downloader;
-import tk.blankstudio.isliroutine.download.OnDownloadListener;
-import tk.blankstudio.isliroutine.loader.ClassDataLab;
-import tk.blankstudio.isliroutine.loader.TimeTableLoader;
+import tk.blankstudio.isliroutine.routinedownload.Downloader;
+import tk.blankstudio.isliroutine.routinedownload.OnDownloadListener;
+import tk.blankstudio.isliroutine.database.DataLab;
 import tk.blankstudio.isliroutine.model.YearGroup;
-import tk.blankstudio.isliroutine.download.ApiClient;
-import tk.blankstudio.isliroutine.download.ApiInterface;
+import tk.blankstudio.isliroutine.routinedownload.ApiInterface;
 import tk.blankstudio.isliroutine.utils.PreferenceUtils;
 
 import java.net.SocketTimeoutException;
-import java.security.acl.Group;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import tk.blankstudio.isliroutine.utils.YearGroupUtils;
 
 /**
@@ -62,11 +50,11 @@ public class GroupSelectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_select);
         progressDoalog = new ProgressDialog(GroupSelectActivity.this);
         progressDoalog.setMax(100);
-        boolean groupDataInitialized=PreferenceUtils.get(this).getGroupYearInitialized();
+        boolean groupDataInitialized = PreferenceUtils.get(this).getGroupYearInitialized();
 
-        if(groupDataInitialized) {
+        if (groupDataInitialized) {
             initData();
-        }else {
+        } else {
             loadDataOfGroup();
         }
 
@@ -75,14 +63,14 @@ public class GroupSelectActivity extends AppCompatActivity {
     public void initData() {
         items = new ArrayList<>();
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.item_spinner_year_group, items);
-        final List<YearGroup> mYearGroup = ClassDataLab.get(this).getYearGroups();
+        final List<YearGroup> mYearGroup = DataLab.get(this).getYearGroups();
 
-        final List<Integer> itemsIds=new ArrayList<>();
+        final List<Integer> itemsIds = new ArrayList<>();
 
         //dont add to list, if the group has been already downloaded
-        List<Integer> downloadedGroupsId= YearGroupUtils.getYearGroupIds(this);
+        List<Integer> downloadedGroupsId = YearGroupUtils.getYearGroupIds(this);
         for (YearGroup yearGroup : mYearGroup) {
-            if(downloadedGroupsId.contains(yearGroup.getId()))
+            if (downloadedGroupsId.contains(yearGroup.getId()))
                 continue;
             items.add(yearGroup.getGroup());
             itemsIds.add(yearGroup.getId());
@@ -140,7 +128,16 @@ public class GroupSelectActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(String errorTitle, String errorMessage) {
+            public void onFailure(Throwable t) {
+                String errorTitle;
+                String errorMessage;
+                if (t instanceof SocketTimeoutException) {
+                    errorTitle = "Server Timeout";
+                    errorMessage = "Mr. Server seems busy. Try again after some time";
+                } else {
+                    errorTitle = "Server Error";
+                    errorMessage = "Cannot contact Mr. Server. Try later.";
+                }
 
                 alertDialog = new AlertDialog.Builder(GroupSelectActivity.this)
                         .setTitle(errorTitle)

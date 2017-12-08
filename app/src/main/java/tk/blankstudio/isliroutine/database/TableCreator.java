@@ -26,6 +26,7 @@ public class TableCreator extends SQLiteOpenHelper {
         createLessionTable(db);
         createRoomTable(db);
         createTeacherTable(db);
+        createClassRoomCourse(db);
 
     }
 
@@ -126,6 +127,23 @@ public class TableCreator extends SQLiteOpenHelper {
                         Teacher.Cols.QUALIFICATION + "," +
                         Teacher.Cols.WEBSITE + "," +
                         " UNIQUE(" + Teacher.Cols.ID + "))"
+        );
+    }
+
+    public void createClassRoomCourse(SQLiteDatabase db) {
+         db.execSQL(
+                "create table " + ClassRoomCourse.NAME + "(" +
+                        "_id integer primary key autoincrement, " +
+                        ClassRoomCourse.Cols.ID + "," +
+                        ClassRoomCourse.Cols.COURSE_STATE+","+
+                        ClassRoomCourse.Cols.DESCRIPTION+","+
+                        ClassRoomCourse.Cols.ENROLLMENT_CODE+","+
+                        ClassRoomCourse.Cols.GOOGLE_DRIVE_LINK+","+
+                        ClassRoomCourse.Cols.SECTION+","+
+                        ClassRoomCourse.Cols.DESCRIPTIONHEADING+","+
+                        ClassRoomCourse.Cols.ALTERNATE_LINK+","+
+                        ClassRoomCourse.Cols.NAME+","+
+                        " UNIQUE(" + ClassRoomCourse.Cols.ID + "))"
         );
     }
 

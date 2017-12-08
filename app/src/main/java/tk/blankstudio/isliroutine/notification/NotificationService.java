@@ -1,19 +1,13 @@
 package tk.blankstudio.isliroutine.notification;
 
-import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import tk.blankstudio.isliroutine.R;
-import tk.blankstudio.isliroutine.loader.ClassDataLab;
+import tk.blankstudio.isliroutine.database.DataLab;
 import tk.blankstudio.isliroutine.model.ClassModel;
 import tk.blankstudio.isliroutine.utils.AlarmUtils;
 import tk.blankstudio.isliroutine.utils.PreferenceUtils;
@@ -59,8 +53,8 @@ public class NotificationService extends Service {
         String dayOfTheWeek = sdf.format(d).toUpperCase();
         Log.d(TAG, "handleTodayNotification: of date: hr:" + d.getHours() + " min:" + d.getMinutes() + " date:" + d.getDate() + "day: " + d.getDay());
 
-        int groupId= PreferenceUtils.get(this).getDefaultGroupYear();
-        List<IEvent> ivents = ClassDataLab.get(this).getEvents(dayOfTheWeek,groupId);
+        int groupId= Integer.parseInt(PreferenceUtils.get(this).getDefaultGroupYear());
+        List<IEvent> ivents = DataLab.get(this).getEvents(dayOfTheWeek,groupId);
         for (IEvent event : ivents) {
             scheduleNotification(this, (ClassModel) event);
         }

@@ -3,7 +3,10 @@ package tk.blankstudio.isliroutine.database;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
-import tk.blankstudio.isliroutine.model.Course;
+import com.google.api.services.classroom.model.Course;
+
+import tk.blankstudio.isliroutine.model.ClassRoomCourse;
+import tk.blankstudio.isliroutine.model.RoutineCourse;
 import tk.blankstudio.isliroutine.model.Lession;
 import tk.blankstudio.isliroutine.model.Room;
 import tk.blankstudio.isliroutine.model.Teacher;
@@ -86,7 +89,7 @@ public class CustomCursorWrapper extends CursorWrapper {
         return new TimeTable(id, mRoomId, mLessionId, mTeacherId, mCourseId, mStartHour, mEndHour, mStartMinute, mEndMinute, mDays, mCreatedAt, mUpdatedAt,mYearGroupId);
     }
 
-    public Course getCourse() {
+    public RoutineCourse getCourse() {
         int id = getInt(getColumnIndex(DbSchema.Course.Cols.ID));
         String mCreatedAt = getString(getColumnIndex(DbSchema.Course.Cols.CREATED_AT));
         String mUpdatedAt = getString(getColumnIndex(DbSchema.Course.Cols.UPDATED_AT));
@@ -96,6 +99,20 @@ public class CustomCursorWrapper extends CursorWrapper {
         String mResource = getString(getColumnIndex(DbSchema.Course.Cols.RESOURCES));
         String mTitle = getString(getColumnIndex(DbSchema.Course.Cols.TITLE));
 
-        return new Course(id, mTitle, mModuleId, mModuleLeader, mAbout, mResource, mCreatedAt, mUpdatedAt);
+        return new RoutineCourse(id, mTitle, mModuleId, mModuleLeader, mAbout, mResource, mCreatedAt, mUpdatedAt);
+    }
+
+    public ClassRoomCourse getClassRoomCourse() {
+        String id = getString(getColumnIndex(DbSchema.ClassRoomCourse.Cols.ID));
+        String name=getString(getColumnIndex(DbSchema.ClassRoomCourse.Cols.NAME));
+        String enrollmentCode=getString(getColumnIndex(DbSchema.ClassRoomCourse.Cols.ENROLLMENT_CODE));
+        String description=getString(getColumnIndex(DbSchema.ClassRoomCourse.Cols.DESCRIPTION));
+        String courseState=getString(getColumnIndex(DbSchema.ClassRoomCourse.Cols.COURSE_STATE));
+        String descriptionHeading=getString(getColumnIndex(DbSchema.ClassRoomCourse.Cols.DESCRIPTIONHEADING));
+        String alternateLink=getString(getColumnIndex(DbSchema.ClassRoomCourse.Cols.ALTERNATE_LINK));
+        String googleDriveLink=getString(getColumnIndex(DbSchema.ClassRoomCourse.Cols.GOOGLE_DRIVE_LINK));
+        String section=getString(getColumnIndex(DbSchema.ClassRoomCourse.Cols.SECTION));
+        ClassRoomCourse course = new ClassRoomCourse(id,name,section,descriptionHeading,alternateLink,enrollmentCode,googleDriveLink,description,courseState);
+        return course;
     }
 }

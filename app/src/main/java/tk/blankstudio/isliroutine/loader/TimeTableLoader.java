@@ -8,6 +8,8 @@ import com.framgia.library.calendardayview.data.IEvent;
 
 import java.util.List;
 
+import tk.blankstudio.isliroutine.database.DataLab;
+
 /**
  * Created by deadsec on 11/14/17.
  */
@@ -31,6 +33,6 @@ public class TimeTableLoader extends AsyncTaskLoader<List<IEvent>> {
     @Override
     public List<IEvent> loadInBackground() {
         Log.d(TAG, "loadInBackground: geting data of groupId:"+groupId+" of day:"+day);
-        return ClassDataLab.get(getContext()).getEvents(day,groupId);
+        return DataLab.get(getContext()).getEvents(day,groupId);
     }
 }

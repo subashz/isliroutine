@@ -1,61 +1,69 @@
 package tk.blankstudio.isliroutine.activity;
 
-import android.app.ActionBar;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import tk.blankstudio.isliroutine.R;
+import tk.blankstudio.isliroutine.database.DataLab;
 import tk.blankstudio.isliroutine.utils.PreferenceUtils;
 
 /**
  * Created by deadsec on 11/21/17.
  */
 
-public class SettingsActivity extends PreferenceActivity{
-    public static final String TAG=SettingsActivity.class.getSimpleName();
+public class SettingsActivity extends PreferenceActivity {
+    public static final String TAG = SettingsActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Prefs prefs=new Prefs();
+        Prefs prefs = new Prefs();
         //if(getFragmentManager().findFragmentById(android.R.id.content)==null) {
-            //getFragmentManager().beginTransaction().add(android.R.id.content,new Prefs()).commit();
+        //getFragmentManager().beginTransaction().add(android.R.id.content,new Prefs()).commit();
         //}
-        getFragmentManager().beginTransaction().replace(android.R.id.content,prefs).commit();
+        getFragmentManager().beginTransaction().replace(android.R.id.content, prefs).commit();
+        getFragmentManager().executePendingTransactions();
     }
 
     public static class Prefs extends PreferenceFragment {
-        private Preference about;
+        private ListPreference defaultListGroup;
+
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_notification);
+            addPreferencesFromResource(R.xml.pref_setting);
 
+            defaultListGroup = (ListPreference) findPreference("default_group_year");
 
-        }
+            // get download group name with its relevant id
+            // and append to list
+            final List<String> groupsName = new ArrayList<>();
+            final List<String> groupsId = new ArrayList<>();
 
-        @Override
-        public void onResume() {
-            super.onResume();
-           about=findPreference("about");
-            if(about!=null) {
-                about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        Log.d(TAG, "onPreferenceClick: ");
-                        return true;
-                    }
-                });
-            }else {
-                Log.d(TAG, "onCreate: null object");
+            try {
+                JSONArray groups = new JSONArray(PreferenceUtils.get(getActivity().getApplicationContext()).getDownloadedGroupYear());
+                for (int i = 0; i < groups.length(); i++) {
+                    groupsName.add(DataLab.get(getActivity().getApplicationContext()).getGroupName(String.valueOf(groups.getInt(i))));
+                    groupsId.add(String.valueOf(groups.getInt(i)));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            defaultListGroup.setEntries(groupsName.toArray(new CharSequence[groupsName.size()]));
+            defaultListGroup.setEntryValues(groupsId.toArray(new CharSequence[groupsId.size()]));
         }
     }
 

@@ -24,6 +24,8 @@ public class PreferenceUtils {
     public static final String AUTO_SILENT_MODE="auto_silent_mode";
     public static final String LIST_ALARM_ID="list_alarm_ids";
 
+    public static final String USER_ACCOUNT="user_account";
+
 
     public static PreferenceUtils get(Context context) {
         if(mPreferenceUtils == null) {
@@ -53,12 +55,12 @@ public class PreferenceUtils {
         return mPreferences.getBoolean(TIME_TABLE_INITIALIZED,false);
     }
 
-    public void setDefaultGroupYear(int groupYear) {
-        mPreferences.edit().putInt(DEFAULT_GROUP_YEAR,groupYear).commit();
+    public void setDefaultGroupYear(String groupYear) {
+        mPreferences.edit().putString(DEFAULT_GROUP_YEAR,groupYear).commit();
     }
 
-    public int getDefaultGroupYear() {
-        return mPreferences.getInt(DEFAULT_GROUP_YEAR,-1);
+    public String getDefaultGroupYear() {
+        return mPreferences.getString(DEFAULT_GROUP_YEAR,"-1");
     }
 
     public String getDownloadedGroupYear() {
@@ -82,6 +84,13 @@ public class PreferenceUtils {
     }
     public void setAlarmIds(String alarmIds) {
          mPreferences.edit().putString(LIST_ALARM_ID,alarmIds).commit();
+    }
+
+    public String getUserAccount() {
+        return mPreferences.getString(USER_ACCOUNT,null);
+    }
+    public void setUserAccount(String account) {
+        mPreferences.edit().putString(USER_ACCOUNT,account).commit();
     }
 
 }

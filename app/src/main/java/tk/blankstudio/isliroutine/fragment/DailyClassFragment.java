@@ -1,7 +1,6 @@
 package tk.blankstudio.isliroutine.fragment;
 
 import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -18,9 +17,7 @@ import android.widget.Toast;
 
 import tk.blankstudio.isliroutine.loader.TimeTableLoader;
 import tk.blankstudio.isliroutine.utils.CustomDecoration;
-import tk.blankstudio.isliroutine.model.Day;
 import tk.blankstudio.isliroutine.R;
-import tk.blankstudio.isliroutine.loader.ClassDataLab;
 import tk.blankstudio.isliroutine.model.ClassModel;
 import com.framgia.library.calendardayview.CalendarDayView;
 import com.framgia.library.calendardayview.EventView;
@@ -91,7 +88,7 @@ public class DailyClassFragment extends Fragment {
                         Log.e("TAG", "onEventViewClick:" + data.getName());
                         if (data instanceof ClassModel) {
                             // change event (ex: set event color)
-                            //dayView.setEvents(ClassDataLab.get(getActivity()).getEvents(day));
+                            //dayView.setEvents(DataLab.get(getActivity()).getEvents(day));
                         }
                         Toast.makeText(getActivity(), "[ev]You clicked " + data.getName(), Toast.LENGTH_SHORT).show();
                     }

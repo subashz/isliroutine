@@ -7,15 +7,16 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import tk.blankstudio.isliroutine.loader.ClassDataLab;
 import tk.blankstudio.isliroutine.model.ClassModel;
-import tk.blankstudio.isliroutine.model.Course;
+import tk.blankstudio.isliroutine.model.ClassRoomCourse;
+import tk.blankstudio.isliroutine.model.RoutineCourse;
 import tk.blankstudio.isliroutine.model.Lession;
 import tk.blankstudio.isliroutine.model.Room;
 import tk.blankstudio.isliroutine.model.Teacher;
 import tk.blankstudio.isliroutine.model.TimeTable;
 import tk.blankstudio.isliroutine.model.YearGroup;
 import com.framgia.library.calendardayview.data.IEvent;
+import com.google.api.services.classroom.model.Course;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,32 +98,46 @@ public class DbHelper {
         db.insertWithOnConflict(DbSchema.Lession.NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
-    public static void addToCourse(SQLiteDatabase db, Course course) {
+    public static void addToCourse(SQLiteDatabase db, RoutineCourse routineCourse) {
         ContentValues values = new ContentValues();
-        values.put(DbSchema.Course.Cols.ID, course.getId());
-        values.put(DbSchema.Course.Cols.CREATED_AT, course.getCreatedAt());
-        values.put(DbSchema.Course.Cols.UPDATED_AT, course.getUpdatedAt());
-        values.put(DbSchema.Course.Cols.ABOUT, course.getAbout());
-        values.put(DbSchema.Course.Cols.MODULE_ID, course.getModuleId());
-        values.put(DbSchema.Course.Cols.MODULE_LEADER, course.getModuleLeader());
-        values.put(DbSchema.Course.Cols.RESOURCES, course.getResources());
-        values.put(DbSchema.Course.Cols.TITLE, course.getTitle());
+        values.put(DbSchema.Course.Cols.ID, routineCourse.getId());
+        values.put(DbSchema.Course.Cols.CREATED_AT, routineCourse.getCreatedAt());
+        values.put(DbSchema.Course.Cols.UPDATED_AT, routineCourse.getUpdatedAt());
+        values.put(DbSchema.Course.Cols.ABOUT, routineCourse.getAbout());
+        values.put(DbSchema.Course.Cols.MODULE_ID, routineCourse.getModuleId());
+        values.put(DbSchema.Course.Cols.MODULE_LEADER, routineCourse.getModuleLeader());
+        values.put(DbSchema.Course.Cols.RESOURCES, routineCourse.getResources());
+        values.put(DbSchema.Course.Cols.TITLE, routineCourse.getTitle());
         db.insertWithOnConflict(DbSchema.Course.NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
-    public static List<Course> getCourse(SQLiteDatabase db) {
-        List<Course> courses = new ArrayList<>();
+    public static void addToClassRoomCourse(SQLiteDatabase db, ClassRoomCourse classRoomCourse) {
+      ContentValues values = new ContentValues();
+        values.put(DbSchema.ClassRoomCourse.Cols.ID, classRoomCourse.getId());
+        values.put(DbSchema.ClassRoomCourse.Cols.NAME, classRoomCourse.getName());
+        values.put(DbSchema.ClassRoomCourse.Cols.DESCRIPTION, classRoomCourse.getDescription());
+        values.put(DbSchema.ClassRoomCourse.Cols.ENROLLMENT_CODE, classRoomCourse.getEnrollmentCode());
+        values.put(DbSchema.ClassRoomCourse.Cols.COURSE_STATE, classRoomCourse.getCourseState());
+        values.put(DbSchema.ClassRoomCourse.Cols.ALTERNATE_LINK, classRoomCourse.getAlternateLink());
+        values.put(DbSchema.ClassRoomCourse.Cols.DESCRIPTIONHEADING, classRoomCourse.getDescriptionHeading());
+        values.put(DbSchema.ClassRoomCourse.Cols.GOOGLE_DRIVE_LINK, classRoomCourse.getGoogleDriveLink());
+        values.put(DbSchema.ClassRoomCourse.Cols.SECTION, classRoomCourse.getSection());
+        db.insertWithOnConflict(DbSchema.ClassRoomCourse.NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+
+    public static List<RoutineCourse> getRoutineCourse(SQLiteDatabase db) {
+        List<RoutineCourse> cours = new ArrayList<>();
         CustomCursorWrapper cursor = getCustomCursor(db, DbSchema.Course.NAME, null, null);
         try {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                courses.add(cursor.getCourse());
+                cours.add(cursor.getCourse());
                 cursor.moveToNext();
             }
         } finally {
             cursor.close();
         }
-        return courses;
+        return cours;
     }
 
     public static List<Lession> getLession(SQLiteDatabase db) {
@@ -203,6 +218,21 @@ public class DbHelper {
             cursor.close();
         }
         return yearGroups;
+    }
+
+      public static List<ClassRoomCourse> getClassRoomCourse(SQLiteDatabase db) {
+        List<ClassRoomCourse> classRoomCourse = new ArrayList<>();
+        CustomCursorWrapper cursor = getCustomCursor(db, DbSchema.ClassRoomCourse.NAME, null, null);
+        try {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                classRoomCourse.add(cursor.getClassRoomCourse());
+                cursor.moveToNext();
+            }
+        } finally {
+            cursor.close();
+        }
+        return classRoomCourse;
     }
 
     public static CustomCursorWrapper getCustomCursor(SQLiteDatabase db, String tableName, String whereClause, String[] whereArgs) {

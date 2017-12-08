@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -21,7 +20,6 @@ import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.text.Html;
@@ -29,22 +27,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import tk.blankstudio.isliroutine.loader.ClassDataLab;
-import tk.blankstudio.isliroutine.download.ApiClient;
-import tk.blankstudio.isliroutine.download.ApiInterface;
+import tk.blankstudio.isliroutine.database.DataLab;
+import tk.blankstudio.isliroutine.routinedownload.ApiClient;
 import tk.blankstudio.isliroutine.R;
 import tk.blankstudio.isliroutine.fragment.DailyClassFragment;
 import tk.blankstudio.isliroutine.model.Day;
-import tk.blankstudio.isliroutine.download.Downloader;
-import tk.blankstudio.isliroutine.download.OnDownloadListener;
+import tk.blankstudio.isliroutine.routinedownload.Downloader;
+import tk.blankstudio.isliroutine.routinedownload.OnDownloadListener;
 import tk.blankstudio.isliroutine.utils.AlarmUtils;
 import tk.blankstudio.isliroutine.utils.PreferenceUtils;
 import tk.blankstudio.isliroutine.notification.NotificationService;
@@ -58,7 +53,6 @@ import com.crashlytics.android.Crashlytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import io.fabric.sdk.android.Fabric;
 import tk.blankstudio.isliroutine.utils.YearGroupUtils;
@@ -90,7 +84,7 @@ public class RoutineActivity extends AppCompatActivity {
 
         groupIndex = getIntent().getIntExtra("GROUPINDEX", -1);
         if (groupIndex == -1) {
-            groupIndex = PreferenceUtils.get(this).getDefaultGroupYear();
+            groupIndex = Integer.parseInt(PreferenceUtils.get(this).getDefaultGroupYear());
             if (groupIndex == -1) {
                 startActivity(new Intent(this, GroupSelectActivity.class));
                 finish();
@@ -108,7 +102,6 @@ public class RoutineActivity extends AppCompatActivity {
         } else {
             init();
         }
-
 
     }
 
@@ -131,14 +124,14 @@ public class RoutineActivity extends AppCompatActivity {
             public void onSuccessfull() {
                 progressDoalog.dismiss();
                 AlertDialog alertDialog = new AlertDialog.Builder(RoutineActivity.this)
-                        .setTitle("Do you want to make " + ClassDataLab.get(RoutineActivity.this).getGroupName(String.valueOf(groupIndex)) + " your default group")
+                        .setTitle("Do you want to make " + DataLab.get(RoutineActivity.this).getGroupName(String.valueOf(groupIndex)) + " your default group")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // this cancels all the previous notification alarms and
                                 //new schedule alarms are added when init() gets called
                                 AlarmUtils.cancelAllAlarms(RoutineActivity.this);
-                                PreferenceUtils.get(RoutineActivity.this).setDefaultGroupYear(groupIndex);
+                                PreferenceUtils.get(RoutineActivity.this).setDefaultGroupYear(String.valueOf(groupIndex));
                                 YearGroupUtils.saveGroupId(RoutineActivity.this, groupIndex);
                                 init();
                             }
@@ -156,7 +149,7 @@ public class RoutineActivity extends AppCompatActivity {
                 if (!YearGroupUtils.getYearGroupIds(RoutineActivity.this).isEmpty()) {
                     alertDialog.show();
                 } else {
-                    PreferenceUtils.get(RoutineActivity.this).setDefaultGroupYear(groupIndex);
+                    PreferenceUtils.get(RoutineActivity.this).setDefaultGroupYear(String.valueOf(groupIndex));
                     YearGroupUtils.saveGroupId(RoutineActivity.this, groupIndex);
                     init();
                 }
@@ -165,7 +158,18 @@ public class RoutineActivity extends AppCompatActivity {
 
 
             @Override
-            public void onFailure(String title, String message) {
+            public void onFailure(Throwable t) {
+
+                String title;
+                String message;
+
+                if (t instanceof SocketTimeoutException) {
+                    title = "Server Timeout";
+                    message = "Mr. Server seems busy. Try again after some time";
+                } else {
+                    title = "Server Error";
+                    message = "Cannot contact Mr. Server. Try later.";
+                }
 
                 mAlertDialog = new AlertDialog.Builder(RoutineActivity.this)
                         .setTitle(title)
@@ -217,7 +221,7 @@ public class RoutineActivity extends AppCompatActivity {
         try {
             JSONArray groups = new JSONArray(PreferenceUtils.get(this).getDownloadedGroupYear());
             for (int i = 0; i < groups.length(); i++) {
-                groupsName.add(ClassDataLab.get(this).getGroupName(String.valueOf(groups.getInt(i))));
+                groupsName.add(DataLab.get(this).getGroupName(String.valueOf(groups.getInt(i))));
                 groupsId.add(groups.getInt(i));
             }
         } catch (JSONException e) {
@@ -243,7 +247,7 @@ public class RoutineActivity extends AppCompatActivity {
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
-        String groupName = ClassDataLab.get(this).getGroupName(String.valueOf(groupIndex));
+        String groupName = DataLab.get(this).getGroupName(String.valueOf(groupIndex));
         String coloredText = getString(R.string.title_activity_routine);
         toolbarTitle.setText(Html.fromHtml(coloredText));
 
@@ -342,7 +346,8 @@ public class RoutineActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
-
+        }else if(id==R.id.action_google_classroom) {
+            startActivity(new Intent(this,ClassRoomActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

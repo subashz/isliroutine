@@ -8,4 +8,9 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_google_classroom"
+        android:orderInCategory="101"
+        android:title="Google ClassRoom"
+        app:showAsAction="never"/>
 </menu>
