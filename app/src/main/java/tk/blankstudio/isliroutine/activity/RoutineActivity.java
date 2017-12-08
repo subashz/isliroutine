@@ -56,6 +56,7 @@ import org.json.JSONException;
 
 import io.fabric.sdk.android.Fabric;
 import tk.blankstudio.isliroutine.utils.YearGroupUtils;
+import tk.blankstudio.isliroutine.widget.RoutineWidgetProvider;
 
 public class RoutineActivity extends AppCompatActivity {
 
@@ -133,6 +134,10 @@ public class RoutineActivity extends AppCompatActivity {
                                 AlarmUtils.cancelAllAlarms(RoutineActivity.this);
                                 PreferenceUtils.get(RoutineActivity.this).setDefaultGroupYear(String.valueOf(groupIndex));
                                 YearGroupUtils.saveGroupId(RoutineActivity.this, groupIndex);
+
+                                // update the routine widgets if routine gets changed
+                                RoutineWidgetProvider.updateRoutineWidget(RoutineActivity.this);
+
                                 init();
                             }
                         })

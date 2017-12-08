@@ -1,5 +1,6 @@
 package tk.blankstudio.isliroutine.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -19,6 +20,7 @@ import java.util.List;
 import tk.blankstudio.isliroutine.R;
 import tk.blankstudio.isliroutine.database.DataLab;
 import tk.blankstudio.isliroutine.utils.PreferenceUtils;
+import tk.blankstudio.isliroutine.widget.RoutineWidgetProvider;
 
 /**
  * Created by deadsec on 11/21/17.
@@ -38,7 +40,7 @@ public class SettingsActivity extends PreferenceActivity {
         getFragmentManager().executePendingTransactions();
     }
 
-    public static class Prefs extends PreferenceFragment {
+    public static class Prefs extends PreferenceFragment implements Preference.OnPreferenceChangeListener{
         private ListPreference defaultListGroup;
 
         @Override
@@ -64,6 +66,16 @@ public class SettingsActivity extends PreferenceActivity {
             }
             defaultListGroup.setEntries(groupsName.toArray(new CharSequence[groupsName.size()]));
             defaultListGroup.setEntryValues(groupsId.toArray(new CharSequence[groupsId.size()]));
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            if(preference.getKey().equals("default_group_year")) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), RoutineWidgetProvider.class);
+                intent.setAction("update");
+                getActivity().getApplicationContext().sendBroadcast(intent);
+            }
+            return false;
         }
     }
 

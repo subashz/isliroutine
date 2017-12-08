@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 
 import tk.blankstudio.isliroutine.R;
+
 import com.framgia.library.calendardayview.data.IEvent;
 
 import java.util.Calendar;
@@ -36,7 +37,7 @@ public class ClassModel implements IEvent {
 
     }
 
-    public ClassModel(long id, Calendar startTime, Calendar endTime, String courseName, String location, String teacherName, String moduleid, int color,String type) {
+    public ClassModel(long id, Calendar startTime, Calendar endTime, String courseName, String location, String teacherName, String moduleid, int color, String type) {
         mId = id;
         mStartTime = startTime;
         mEndTime = endTime;
@@ -45,21 +46,21 @@ public class ClassModel implements IEvent {
         mTeacherName = teacherName;
         mModuleid = moduleid;
         mColor = color;
-        mType=type;
+        mType = type;
     }
 
-    public static ClassModel getClassModel(Context context, int id, int startHour, int startMinute, int stopHour, int stopMinute, String module, String location, String teacher, String mId,String type) {
+    public static ClassModel getClassModel(Context context, int id, int startHour, int startMinute, int stopHour, int stopMinute, String module, String location, String teacher, String mId, String type) {
         int eventColor = ContextCompat.getColor(context, R.color.eventColor1);
         //Random rand = new Random();
         //int color = Color.argb(255, rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
-        int color = Color.argb(20,62,64,149);
+        int color = Color.argb(20, 62, 64, 149);
         Calendar timeStart = Calendar.getInstance();
         timeStart.set(Calendar.HOUR_OF_DAY, startHour);
         timeStart.set(Calendar.MINUTE, startMinute);
         Calendar timeEnd = (Calendar) timeStart.clone();
         timeEnd.set(Calendar.HOUR_OF_DAY, stopHour);
         timeEnd.set(Calendar.MINUTE, stopMinute);
-        return new ClassModel(id, timeStart, timeEnd, module, location, teacher, mId, color,type);
+        return new ClassModel(id, timeStart, timeEnd, module, location, teacher, mId, color, type);
     }
 
 
@@ -117,6 +118,16 @@ public class ClassModel implements IEvent {
 
     public void setLocation(String location) {
         this.mLocation = location;
+    }
+
+    public String getTime() {
+        String time = String.format("%1$02d:%2$02d-%3$02d:%4$02d",
+                this.getStartTime().get(Calendar.HOUR_OF_DAY),
+                this.getStartTime().get(Calendar.MINUTE),
+                this.getEndTime().get(Calendar.HOUR_OF_DAY),
+                this.getEndTime().get(Calendar.MINUTE));
+        return time;
+
     }
 
     @Override

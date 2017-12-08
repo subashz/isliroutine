@@ -3,10 +3,9 @@
     package="tk.blankstudio.isliroutine">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
@@ -26,9 +25,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".activity.GroupSelectActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".activity.GroupSelectActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver android:name=".notification.NotificationPublisher" />
 
@@ -48,36 +47,57 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="tk.blankstudio.isliroutine.activity.RoutineActivity" />
         </activity>
-        <activity android:name=".activity.ClassRoomActivity" android:exported="true"/>
-
+        <activity
+            android:name=".activity.ClassRoomActivity"
+            android:exported="true" />
         <activity
             android:name=".activity.AboutActivity"
             android:label="@string/title_about"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".activity.SettingsActivity">
+            android:parentActivityName=".activity.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="tk.blankstudio.isliroutine.activity.SettingsActivity" />
         </activity>
 
-
-        <service android:name=".notification.NotificationService" android:label="Set Daily Notification alarm Service">
+        <service
+            android:name=".notification.NotificationService"
+            android:label="Set Daily Notification alarm Service">
             <intent-filter>
-                <action android:name="tk.blankstudio.isliroutine.notification.NotificationService"/>
+                <action android:name="tk.blankstudio.isliroutine.notification.NotificationService" />
             </intent-filter>
         </service>
 
-        <receiver android:name=".notification.NotificationReceiver"
+        <receiver
+            android:name=".notification.NotificationReceiver"
             android:label="StartMyServiceAtBootReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="1fa158df2b1bf417f3e02e7c2782805d41bad7b3" />
+
+        <receiver android:name=".widget.RoutineWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/routine_widget_info" />
+        </receiver>
+        <service android:name=".widget.RoutineWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
+
+        <!--<activity android:name=".RoutineWidgetConfigureActivity">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
     </application>
 
 </manifest>

@@ -1,16 +1,21 @@
 package tk.blankstudio.isliroutine.notification;
 
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.RemoteViews;
 
+import tk.blankstudio.isliroutine.R;
 import tk.blankstudio.isliroutine.database.DataLab;
 import tk.blankstudio.isliroutine.model.ClassModel;
 import tk.blankstudio.isliroutine.utils.AlarmUtils;
 import tk.blankstudio.isliroutine.utils.PreferenceUtils;
+import tk.blankstudio.isliroutine.widget.RoutineWidgetProvider;
 
 import com.framgia.library.calendardayview.data.IEvent;
 
@@ -58,6 +63,9 @@ public class NotificationService extends Service {
         for (IEvent event : ivents) {
             scheduleNotification(this, (ClassModel) event);
         }
+
+        RoutineWidgetProvider.updateRoutineWidget(this);
+
     }
 
     /**
