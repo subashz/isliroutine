@@ -40,30 +40,30 @@
         android:layout_height="16dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:fontFamily="@font/lato"
         android:lines="1"
         android:maxLines="1"
         app:layout_constraintBottom_toBottomOf="@+id/tv_class_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_class_name"
-        tools:hint="05:40-04:20"
-        android:layout_marginRight="8dp" />
+        tools:hint="05:40-04:20" />
 
     <TextView
         android:id="@+id/tv_class_teacher_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:ellipsize="marquee"
         android:fontFamily="@font/lato"
         android:gravity="start"
+        android:singleLine="true"
         android:textAlignment="textStart"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="@+id/tv_class_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_class_name"
-        tools:hint="Mahendra Dhoni"
-        android:singleLine="true"
-        android:layout_marginRight="8dp" />
+        tools:hint="Mahendra Dhoni" />
 
     <TextView
         android:id="@+id/tv_class_location"
@@ -73,13 +73,13 @@
         android:layout_marginStart="8dp"
         android:ellipsize="end"
         android:fontFamily="@font/lato"
+        android:gravity="end"
         android:lines="1"
         android:textAlignment="textEnd"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/tv_class_name"
-        tools:hint="Bucking Ham Palace"
-        android:gravity="end" />
+        tools:hint="Bucking Ham Palace" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"

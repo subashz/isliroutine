@@ -2,9 +2,11 @@ package tk.blankstudio.isliroutine.activity;
 
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
@@ -72,12 +74,20 @@ public class RoutineActivity extends AppCompatActivity {
     private int firstTimeCheckOnItemSelected;
     private int previousSelectedIndex;
     DailyClassFragment mDailyClassFragment[] = new DailyClassFragment[6];
+    ViewPager viewPager;
+    TabLayout tabLayout;
+    MyBroadCastReceiver updateTimeTableReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_routine);
+
+        // time table update receiver.. mug.. fucked up
+        //updateTimeTableReceiver=new MyBroadCastReceiver();
+        //registerReceiver(updateTimeTableReceiver, new IntentFilter("updateRoutineTimeTable"));
 
         View decor = getWindow().getDecorView();
         decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
@@ -221,11 +231,10 @@ public class RoutineActivity extends AppCompatActivity {
 
     public void init() {
 
+        // init all the actionbar spinner values i.e downloaded groups
         groupSelectSpinner = (Spinner) findViewById(R.id.toolbar_group_select);
-
         final List<String> groupsName = new ArrayList<>();
         final List<Integer> groupsId = new ArrayList<>();
-
         try {
             JSONArray groups = new JSONArray(PreferenceUtils.get(this).getDownloadedGroupYear());
             for (int i = 0; i < groups.length(); i++) {
@@ -242,10 +251,9 @@ public class RoutineActivity extends AppCompatActivity {
         previousSelectedIndex = groupsId.indexOf(groupIndex);
         groupSelectSpinner.setSelection(previousSelectedIndex);
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.container);
+        viewPager = (ViewPager) findViewById(R.id.container);
         CoordinatorLayout mainView = (CoordinatorLayout) findViewById(R.id.main_content);
-        viewPager.setAdapter(mSectionsPagerAdapter);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -253,7 +261,7 @@ public class RoutineActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             toolbar.getOverflowIcon().setTint(Color.BLACK);
 
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         String groupName = DataLab.get(this).getGroupName(String.valueOf(groupIndex));
         String coloredText = getString(R.string.title_activity_routine);
@@ -261,14 +269,7 @@ public class RoutineActivity extends AppCompatActivity {
 
         NotificationService.setDailyRepeatingNotification(this, true);
 
-        viewPager.setOffscreenPageLimit(6);
-        setupViewPager(mSectionsPagerAdapter, viewPager, groupIndex);
-        viewPager.setAdapter(mSectionsPagerAdapter);
-        tabLayout.setupWithViewPager(viewPager);
-        Calendar calendar = Calendar.getInstance();
-        final int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-        viewPager.setCurrentItem(day, true);
-
+        updateTimeTable(groupIndex);
 
         NotificationManager notificationManager =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -296,13 +297,7 @@ public class RoutineActivity extends AppCompatActivity {
                     // kam chalu matra ho yo code.. // it just reloads all viewpager, tablayout and feels like a refresh layout
                     // bholi... :)
                     if (previousSelectedIndex != position) {
-                        removeAllFragment();
-                        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-                        setupViewPager(sectionsPagerAdapter, viewPager, groupsId.get(position));
-                        viewPager.setAdapter(sectionsPagerAdapter);
-                        viewPager.setOffscreenPageLimit(6);
-                        viewPager.setCurrentItem(day, true);
-                        tabLayout.setupWithViewPager(viewPager);
+                        updateTimeTable(groupsId.get(position));
                         previousSelectedIndex = position;
                     }
 
@@ -318,6 +313,17 @@ public class RoutineActivity extends AppCompatActivity {
         });
     }
 
+    private void updateTimeTable(int groupIndex) {
+        removeAllFragment();
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        setupViewPager(sectionsPagerAdapter, viewPager, groupIndex);
+        viewPager.setAdapter(sectionsPagerAdapter);
+        viewPager.setOffscreenPageLimit(6);
+        final int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
+        viewPager.setCurrentItem(day, true);
+        tabLayout.setupWithViewPager(viewPager);
+    }
+
     private void setupViewPager(SectionsPagerAdapter sectionsPagerAdapter, ViewPager viewPager, int groupIndex) {
         Log.d(TAG, "setupViewPager: Setting view pager");
         sectionsPagerAdapter.notifyDataSetChanged();
@@ -331,8 +337,10 @@ public class RoutineActivity extends AppCompatActivity {
     private void removeAllFragment() {
         Log.d(TAG, "removeAllFragment: ");
         for (int i = 0; i < 6; i++) {
-            getSupportFragmentManager().beginTransaction().remove(mDailyClassFragment[i]).commit();
-            mDailyClassFragment[i] = null;
+            if (mDailyClassFragment[i] != null) {
+                getSupportFragmentManager().beginTransaction().remove(mDailyClassFragment[i]).commit();
+                mDailyClassFragment[i] = null;
+            }
         }
     }
 
@@ -346,16 +354,11 @@ public class RoutineActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
-        }else if(id==R.id.action_google_classroom) {
-            startActivity(new Intent(this,ClassRoomActivity.class));
+        } else if (id == R.id.action_google_classroom) {
+            startActivity(new Intent(this, ClassRoomActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
@@ -384,7 +387,6 @@ public class RoutineActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return mFragmentList.size();
         }
 
@@ -418,5 +420,17 @@ public class RoutineActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+    }
+
+    private class MyBroadCastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "onReceive: mybroadcastreceiver");
+            if (intent.getAction().equals("updateRoutineTimeTable")) {
+                int groupId = intent.getIntExtra("groupIndex", 0);
+                RoutineActivity.this.updateTimeTable(groupId);
+            }
+        }
     }
 }

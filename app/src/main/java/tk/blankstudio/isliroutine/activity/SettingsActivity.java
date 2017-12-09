@@ -71,6 +71,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 Intent intent = new Intent(getActivity().getApplicationContext(), RoutineWidgetProvider.class);
                 intent.setAction("update");
                 getActivity().getApplicationContext().sendBroadcast(intent);
+
+                Intent i = new Intent(getActivity().getApplicationContext(), RoutineActivity.class);
+                i.putExtra("groupIndex",Integer.parseInt(newValue.toString()));
+                i.setAction("updateRoutineTimeTable");
+                getActivity().getApplicationContext().sendBroadcast(i);
+
             }
             return false;
         }

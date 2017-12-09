@@ -30,7 +30,7 @@
         <item name="android:background">#ffffff</item>
     </style>
 
-    <style name="WhiteStatusBarNoActionBar" parent="Theme.AppCompat.Light.NoActionBar" >
+    <style name="WhiteNoActionBar" parent="Theme.AppCompat.Light.NoActionBar" >
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowDisablePreview">true</item>

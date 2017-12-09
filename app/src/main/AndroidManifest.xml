@@ -27,13 +27,17 @@
         </activity>
         <activity
             android:name=".activity.GroupSelectActivity"
-            android:theme="@style/WhiteStatusBarNoActionBar" />
+            android:theme="@style/WhiteNoActionBar" />
 
         <receiver android:name=".notification.NotificationPublisher" />
 
         <activity
             android:name=".activity.RoutineActivity"
-            android:theme="@style/RoutineActivityTheme" />
+            android:theme="@style/RoutineActivityTheme" >
+            <intent-filter>
+                <action android:name="updateRoutineTimeTable" />
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="preloaded_fonts"
@@ -56,7 +60,7 @@
             android:name=".activity.AboutActivity"
             android:label="@string/title_about"
             android:parentActivityName=".activity.SettingsActivity"
-            android:theme="@style/WhiteStatusBarNoActionBar">
+            android:theme="@style/WhiteNoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="tk.blankstudio.isliroutine.activity.SettingsActivity" />
@@ -91,6 +95,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/routine_widget_holder" />
         </receiver>
+
         <service android:name=".widget.RoutineWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
 

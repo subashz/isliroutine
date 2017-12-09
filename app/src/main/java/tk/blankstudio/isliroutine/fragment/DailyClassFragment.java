@@ -80,7 +80,7 @@ public class DailyClassFragment extends Fragment {
                     @Override
                     public void onEventClick(EventView view, IEvent data) {
                         Log.e("TAG", "onEventClick:" + data.getName());
-                        Toast.makeText(getActivity(), "[e]You clicked: " + data.getName(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getActivity(), "[e]You clicked: " + data.getName(), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -90,7 +90,7 @@ public class DailyClassFragment extends Fragment {
                             // change event (ex: set event color)
                             //dayView.setEvents(DataLab.get(getActivity()).getEvents(day));
                         }
-                        Toast.makeText(getActivity(), "[ev]You clicked " + data.getName(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getActivity(), "[ev]You clicked " + data.getName(), Toast.LENGTH_SHORT).show();
                     }
                 });
 

@@ -43,7 +43,6 @@ public class NotificationPublisher extends BroadcastReceiver {
         int endMinute = intent.getIntExtra(END_MINUTE, 0);
         String courseName=intent.getStringExtra(COURSE_NAME);
 
-        Notification notification = getNotification(context,type,courseName);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             if (notificationManager != null && notificationManager.isNotificationPolicyAccessGranted()) {
@@ -56,9 +55,11 @@ public class NotificationPublisher extends BroadcastReceiver {
         Calendar cal = Calendar.getInstance();
         if (PreferenceUtils.get(context).getClassNotificationReminder() && notificationManager!=null) {
             if (type.equals(CLASS_STARTING) && startHour == cal.get(Calendar.HOUR_OF_DAY) && startMinute <= cal.get(Calendar.MINUTE)) {
+                Notification notification = getNotification(context,type,courseName);
                 notificationManager.cancel(id);
                 notificationManager.notify(id, notification);
             } else if (type.equals(CLASS_ENDING) && endHour == cal.get(Calendar.HOUR_OF_DAY) && endMinute <= cal.get(Calendar.MINUTE)) {
+                Notification notification = getNotification(context,type,courseName);
                 notificationManager.cancel(id);
                 notificationManager.notify(id, notification);
             }
