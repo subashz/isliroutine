@@ -49,12 +49,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import com.crashlytics.android.Crashlytics;
+//import com.crashlytics.android.Crashlytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import io.fabric.sdk.android.Fabric;
+//import io.fabric.sdk.android.Fabric;
 import tk.blankstudio.isliroutine.utils.YearGroupUtils;
 import tk.blankstudio.isliroutine.widget.RoutineWidgetProvider;
 
@@ -76,8 +76,11 @@ public class RoutineActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+        //Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_routine);
+
+        View decor = getWindow().getDecorView();
+        decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 
         progressDoalog = new ProgressDialog(RoutineActivity.this);
         progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);

@@ -58,8 +58,8 @@ public class NotificationService extends Service {
         String dayOfTheWeek = sdf.format(d).toUpperCase();
         Log.d(TAG, "handleTodayNotification: of date: hr:" + d.getHours() + " min:" + d.getMinutes() + " date:" + d.getDate() + "day: " + d.getDay());
 
-        int groupId= Integer.parseInt(PreferenceUtils.get(this).getDefaultGroupYear());
-        List<IEvent> ivents = DataLab.get(this).getEvents(dayOfTheWeek,groupId);
+        int groupId = Integer.parseInt(PreferenceUtils.get(this).getDefaultGroupYear());
+        List<IEvent> ivents = DataLab.get(this).getEvents(dayOfTheWeek, groupId);
         for (IEvent event : ivents) {
             scheduleNotification(this, (ClassModel) event);
         }
@@ -72,26 +72,28 @@ public class NotificationService extends Service {
      * This method sets the daily repeating scheduler. It sets the repeated alarm.
      * This method calls the NotificationReceiver.class at 2 o clock in morning . If time is passed,
      * it immediately executes. THis methods job is to make sure that the NotificationReceiver is called at least daily.
+     *
      * @param context Context
-     * @param choice whether to set daily repeating notification or not
+     * @param choice  whether to set daily repeating notification or not
      */
     public static void setDailyRepeatingNotification(Context context, boolean choice) {
-        Intent  intent = new Intent(context, NotificationReceiver.class);
+        Intent intent = new Intent(context, NotificationReceiver.class);
         intent.setAction("repeat");
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 2);
         cal.set(Calendar.MINUTE, 0);
         if (choice) {
-            AlarmUtils.addRepeatingAlarm(context,intent,REQ_CODE_SET_DAILY_REPEATING,cal);
+            AlarmUtils.addRepeatingAlarm(context, intent, REQ_CODE_SET_DAILY_REPEATING, cal);
         } else {
-            AlarmUtils.cancelAlarm(context,intent,REQ_CODE_SET_DAILY_REPEATING);
-       }
+            AlarmUtils.cancelAlarm(context, intent, REQ_CODE_SET_DAILY_REPEATING);
+        }
     }
 
     /**
      * This methods main task is to schedule the notification
      * It make sure that the class model start and endtime alarm is set.
-     * @param context Context
+     *
+     * @param context    Context
      * @param classModel Classmodel
      */
     public void scheduleNotification(Context context, ClassModel classModel) {
@@ -106,14 +108,14 @@ public class NotificationService extends Service {
         startClassIntent.putExtra(NotificationPublisher.UID, uId);
         startClassIntent.putExtra(NotificationPublisher.START_HOUR, startHour);
         startClassIntent.putExtra(NotificationPublisher.START_MINUTE, startMinute);
-        startClassIntent.putExtra(NotificationPublisher.COURSE_NAME,classModel.getCourseName());
+        startClassIntent.putExtra(NotificationPublisher.COURSE_NAME, classModel.getCourseName());
         startClassIntent.putExtra(NotificationPublisher.CLASS_STATUS, NotificationPublisher.CLASS_STARTING);
 
         Intent endClassIntent = new Intent(context, NotificationPublisher.class);
         endClassIntent.putExtra(NotificationPublisher.UID, uId);
         endClassIntent.putExtra(NotificationPublisher.CLASS_STATUS, NotificationPublisher.CLASS_ENDING);
         endClassIntent.putExtra(NotificationPublisher.END_HOUR, endHour);
-        endClassIntent.putExtra(NotificationPublisher.COURSE_NAME,classModel.getCourseName());
+        endClassIntent.putExtra(NotificationPublisher.COURSE_NAME, classModel.getCourseName());
         endClassIntent.putExtra(NotificationPublisher.END_MINUTE, endMinute);
 
         Calendar startCal = Calendar.getInstance();
@@ -126,9 +128,32 @@ public class NotificationService extends Service {
         endCal.set(Calendar.MINUTE, endMinute);
         endCal.set(Calendar.SECOND, 0);
 
-        AlarmUtils.addAlarm(context,endClassIntent,(uId+endHour)*endHour,endCal);
-        AlarmUtils.addAlarm(context,startClassIntent,(uId+startHour)*startHour,startCal);
-        Log.d("NotificationHandler", "Set Alarm at Time at: sh:" + startHour + " sm:" + startMinute + " eh:" + endHour + " em:" + endMinute);
+        if (PreferenceUtils.get(context).getBeforeClassEndsNotification()) {
+            // reduce minutes
+            int startOffsetMinute = Integer.parseInt(PreferenceUtils.get(context).getBeforeClassEndsNotificationMinutes());
+            endCal.add(Calendar.MINUTE, -(startOffsetMinute));
+//            if (startOffsetMinute <= endMinute) {
+//                endCal.set(Calendar.MINUTE, endMinute - startOffsetMinute);
+//            } else {
+//                if (startOffsetMinute <= 60) {
+//                    endCal.set(Calendar.MINUTE, 60 - startOffsetMinute);
+//                    endCal.set(Calendar.HOUR_OF_DAY, endHour - 1);
+//                } else {
+//                    int hour = startOffsetMinute / 60;
+//                    int minute = startOffsetMinute % 60;
+//                    endCal.set(Calendar.MINUTE, 60 - minute);
+//                    endCal.set(Calendar.HOUR_OF_DAY, endHour - hour);
+//                }
+//            }
+        }
+        if (PreferenceUtils.get(context).getBeforeClassStartsNotification()) {
+            int startOffsetMinute = Integer.parseInt(PreferenceUtils.get(context).getBeforeClassStartsNotificationMinutes());
+            startCal.add(Calendar.MINUTE, -(startOffsetMinute));
+        }
+
+        AlarmUtils.addAlarm(context, endClassIntent, (uId + endHour) * endHour, endCal);
+        AlarmUtils.addAlarm(context, startClassIntent, (uId + startHour) * startHour, startCal);
+        Log.d("NotificationHandler", "Set Alarm at Time at: sh:" + startCal.get(Calendar.HOUR_OF_DAY) + " sm:" + startCal.get(Calendar.MINUTE) + " eh:" + endCal.get(Calendar.HOUR_OF_DAY) + " em:" + endCal.get(Calendar.MINUTE));
     }
 
 

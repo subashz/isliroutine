@@ -27,13 +27,13 @@
         </activity>
         <activity
             android:name=".activity.GroupSelectActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/WhiteStatusBarNoActionBar" />
 
         <receiver android:name=".notification.NotificationPublisher" />
 
         <activity
             android:name=".activity.RoutineActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/RoutineActivityTheme" />
 
         <meta-data
             android:name="preloaded_fonts"
@@ -42,6 +42,7 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
+            android:theme="@style/WhiteToolBar"
             android:parentActivityName=".activity.RoutineActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -49,12 +50,13 @@
         </activity>
         <activity
             android:name=".activity.ClassRoomActivity"
+            android:theme="@style/WhiteToolBar"
             android:exported="true" />
         <activity
             android:name=".activity.AboutActivity"
             android:label="@string/title_about"
             android:parentActivityName=".activity.SettingsActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/WhiteStatusBarNoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="tk.blankstudio.isliroutine.activity.SettingsActivity" />
@@ -87,7 +89,7 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/routine_widget_info" />
+                android:resource="@xml/routine_widget_holder" />
         </receiver>
         <service android:name=".widget.RoutineWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>

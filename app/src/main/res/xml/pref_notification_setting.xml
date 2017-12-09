@@ -1,0 +1,67 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked. -->
+    <PreferenceCategory
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="Reminder Notification">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="class_notifications"
+            android:summary="@string/pref_class_notification_summary"
+            android:title="@string/pref_class_notification_title" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="class_notification_vibrate"
+            android:summary="Vibrate when notification pops up"
+            android:title="Vibrate" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="auto_silent_mode"
+            android:summary="@string/pref_auto_silent_summary"
+            android:title="@string/pref_auto_silent_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Notification before class starts">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="before_class_starts_notification"
+            android:title="Show notification before class starts" />
+
+        <EditTextPreference
+            android:defaultValue="0"
+            android:inputType="number"
+            android:key="before_class_starts_notification_minutes"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="Set minute to show notification before class starts "
+            android:title="Minutes before class" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Notification before class ends">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:title="Show notification before class ends"
+            android:key="before_class_ends_notification" />
+
+        <EditTextPreference
+            android:defaultValue="0"
+            android:inputType="number"
+            android:key="before_class_ends_notification_minutes"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="Set minute to show notification before class ends "
+            android:title="Minutes before class ends" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

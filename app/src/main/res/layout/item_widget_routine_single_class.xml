@@ -16,10 +16,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="end"
+            android:fontFamily="@font/lato_bold"
             android:lines="1"
             android:padding="8dp"
-            android:textSize="16sp"
-            android:text="Advance Database Managerment System LOl" />
+            android:text="Advance Database Managerment System LOl"
+            android:textSize="15sp" />
 
 
         <TextView
@@ -27,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
+            android:fontFamily="@font/lato"
             android:padding="8dp"
             android:text="20:00-30:00" />
     </LinearLayout>
@@ -38,10 +40,11 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
             android:id="@+id/tv_widget_teacher_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="@font/lato"
             android:gravity="top"
             android:padding="8dp"
             android:text="Ram Maya Paneru" />
@@ -52,6 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
+            android:fontFamily="@font/lato"
             android:padding="8dp"
             android:text="Bucking Ham Palace" />
     </LinearLayout>

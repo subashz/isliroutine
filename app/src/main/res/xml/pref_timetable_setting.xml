@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        key="addTimeTable"
+        android:title="Download Another Timetable">
+        <intent
+            android:action="update_time_table"
+            android:targetClass="tk.blankstudio.isliroutine.activity.GroupSelectActivity"
+            android:targetPackage="tk.blankstudio.isliroutine" />
+    </Preference>
+
+    <ListPreference
+        android:key="default_group_year"
+        android:summary="Please select your default group"
+        android:title="Change Group" />
+
+</PreferenceScreen>

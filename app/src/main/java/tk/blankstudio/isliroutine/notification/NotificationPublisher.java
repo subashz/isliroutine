@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Build;
 import android.util.Log;
@@ -99,14 +100,27 @@ public class NotificationPublisher extends BroadcastReceiver {
         String classTitle;
         String classText;
         if (type.equals(CLASS_STARTING)) {
-            classTitle = context.getString(R.string.start_class_notification_title, courseName);
-            classText = context.getString(R.string.start_class_notification_text);
+            if(PreferenceUtils.get(context).getBeforeClassStartsNotification()) {
+                classTitle = context.getString(R.string.before_start_class_notification_title, courseName);
+                classText = context.getString(R.string.before_start_class_notification_text,PreferenceUtils.get(context).getBeforeClassStartsNotificationMinutes());
+            }else {
+                classTitle = context.getString(R.string.start_class_notification_title, courseName);
+                classText = context.getString(R.string.start_class_notification_text);
+            }
         } else {
-            classTitle = context.getString(R.string.end_class_notification_title, courseName);
-            classText = context.getString(R.string.end_class_notification_text);
+            if(PreferenceUtils.get(context).getBeforeClassEndsNotification()) {
+                classTitle = context.getString(R.string.before_end_class_notification_title, courseName);
+                classText = context.getString(R.string.before_end_class_notification_text,PreferenceUtils.get(context).getBeforeClassEndsNotificationMinutes());
+            }else {
+                classTitle = context.getString(R.string.end_class_notification_title, courseName);
+                classText = context.getString(R.string.end_class_notification_text);
+            }
         }
         Notification.Builder builder = new Notification.Builder(context);
         builder.setContentTitle(classTitle);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setColor(Color.WHITE);
+        }
         builder.setContentText(classText);
         builder.setSmallIcon(R.drawable.ic_logo);
 
