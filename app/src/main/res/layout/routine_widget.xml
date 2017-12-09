@@ -1,7 +1,27 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rv_widget_routine_list"
-    android:padding="@dimen/widget_margin">
+    android:background="#f8f8f8"
+    android:orientation="vertical"
+    >
+    <ListView
+        android:id="@+id/rv_widget_routine_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:loopViews="true" />
 
-</ListView>
+    <TextView
+        android:id="@+id/empty_view"
+        style="@android:style/TextAppearance.Medium"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:layout_margin="4dp"
+        android:text="No class. Cheer Up :)"
+        />
+
+</LinearLayout>

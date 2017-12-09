@@ -31,7 +31,7 @@
         <![CDATA[
    <h2><span style="color: #003366;"><strong>&nbsp;</strong></span></h2>
 <p style="text-align: center;"><span style="color: #003366;">/**</span></p>
-<p style="text-align: center;"><span style="color: #003366;"><strong>This application is still in the early stage.It was developed when similar apps didnot logged in. All the routines are upstreamed from the official college website. It will be updated every week until I graduate.</strong></span><br /><br /><span style="text-decoration: underline; color: #003366;"><span><strong>Future Feature</strong></span></span><br /><span style="color: #003366;">*Set offset Alarm before class begins or ends</span><br /><span style="color: #003366;">*Google classroom integration [WIP]</span><br /><span style="color: #003366;">*College notification board</span><br /><span style="color: #003366;">*Widgets</span><br /><br /><br /><span style="color: #003366;"><em><strong>&nbsp; &nbsp; For any bug report / feature request, Send mail at blacpythoz@gmail.com. If you want to contribute on this project, feel free to contact me. I am happy to share code with you</strong></em></span></p>
+<p style="text-align: center;"><span style="color: #003366;"><strong>This application is still in the early stage.It was developed when similar apps didnot logged in. All the routines are upstreamed from the official college website. It will be updated every week until I graduate.</strong></span><br /><br /><span style="text-decoration: underline; color: #003366;"><span><strong>Future Feature</strong></span></span><br /><span style="color: #003366;">*Set offset Alarm before class begins or ends</span><br /><span style="color: #003366;">*Google classroom integration [WIP]</span><br /><span style="color: #003366;">*College notification board</span><br /><span style="color: #003366;">*Widgets[Implemented]</span><br /><br /><br /><span style="color: #003366;"><em><strong>&nbsp; &nbsp; For any bug report / feature request, Send mail at blacpythoz@gmail.com. If you want to contribute on this project, feel free to contact me. I am happy to share code with you</strong></em></span></p>
 <p style="text-align: center;"><span style="color: #003366;"><em><strong>**/</strong></em></span></p>
     ]]>
     </string>
@@ -39,6 +39,7 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
+    <string name="download_routine_text">Download Routine</string>
 
 
 </resources>

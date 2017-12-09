@@ -82,7 +82,7 @@ public class RoutineViewFactory implements RemoteViewsService.RemoteViewsFactory
         extras.putString(RoutineWidgetProvider.EXTRA_WORD, classModel.getCourseName());
         i.putExtras(extras);
 
-        row.setOnClickFillInIntent(android.R.id.text1, i);
+        row.setOnClickFillInIntent(R.id.tv_widget_course_name, i);
 
         return row;
     }
@@ -106,4 +106,5 @@ public class RoutineViewFactory implements RemoteViewsService.RemoteViewsFactory
     public boolean hasStableIds() {
         return true;
     }
+
 }

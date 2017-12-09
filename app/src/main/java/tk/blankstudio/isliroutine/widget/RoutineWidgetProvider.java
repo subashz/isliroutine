@@ -33,12 +33,8 @@ public class RoutineWidgetProvider extends AppWidgetProvider {
 
         svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         svcIntent.setData(Uri.parse(svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
-
-        RemoteViews widget=new RemoteViews(context.getPackageName(),
-                R.layout.routine_widget);
-
-        widget.setRemoteAdapter(R.id.rv_widget_routine_list,
-                svcIntent);
+        RemoteViews widget=new RemoteViews(context.getPackageName(), R.layout.routine_widget);
+        widget.setRemoteAdapter(R.id.rv_widget_routine_list, svcIntent);
 
         // open the activity when clicked
         Intent clickIntent=new Intent(context, RoutineActivity.class);
@@ -49,7 +45,7 @@ public class RoutineWidgetProvider extends AppWidgetProvider {
 
         widget.setPendingIntentTemplate(R.id.rv_widget_routine_list, clickPI);
 
-
+        widget.setEmptyView(R.id.rv_widget_routine_list,R.id.empty_view);
         Log.d(TAG, "updateAppWidget: id:"+appWidgetId);
 
         // Instruct the widget manager to update the widget
