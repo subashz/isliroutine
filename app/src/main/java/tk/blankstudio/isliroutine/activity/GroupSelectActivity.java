@@ -97,7 +97,7 @@ public class GroupSelectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final Intent intent = new Intent(GroupSelectActivity.this, RoutineActivity.class);
                 intent.putExtra("GROUPINDEX", groupIndex);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });

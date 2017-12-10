@@ -31,6 +31,8 @@
     </style>
 
     <style name="PreferenceStyle">
+        <item name="android:listDivider">@null</item>
+        <item name="android:divider">@null</item>
         <item name="android:textColorPrimary">@color/preference_title_color</item>
         <item name="android:textColorSecondary">@color/preference_title_color</item>
     </style>

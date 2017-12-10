@@ -76,7 +76,6 @@ public class RoutineActivity extends AppCompatActivity {
     DailyClassFragment mDailyClassFragment[] = new DailyClassFragment[6];
     ViewPager viewPager;
     TabLayout tabLayout;
-    MyBroadCastReceiver updateTimeTableReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,7 +241,6 @@ public class RoutineActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.item_spinner_year_group, groupsName);
         groupSelectSpinner.setAdapter(adapter);
         previousSelectedIndex = groupsId.indexOf(groupIndex);
@@ -250,7 +248,6 @@ public class RoutineActivity extends AppCompatActivity {
 
         viewPager = (ViewPager) findViewById(R.id.container);
         CoordinatorLayout mainView = (CoordinatorLayout) findViewById(R.id.main_content);
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -264,8 +261,10 @@ public class RoutineActivity extends AppCompatActivity {
         String coloredText = getString(R.string.title_activity_routine);
         toolbarTitle.setText(Html.fromHtml(coloredText));
 
+        // set the daily repeating notification
         NotificationService.setDailyRepeatingNotification(this, true);
 
+        //load or update the time table view
         updateTimeTable(groupIndex);
 
         NotificationManager notificationManager =
@@ -392,7 +391,6 @@ public class RoutineActivity extends AppCompatActivity {
             return mFragmentTitleList.get(position);
         }
 
-
     }
 
     @Override
@@ -413,20 +411,4 @@ public class RoutineActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    private class MyBroadCastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "onReceive: mybroadcastreceiver");
-            if (intent.getAction().equals("updateRoutineTimeTable")) {
-                int groupId = intent.getIntExtra("groupIndex", 0);
-                RoutineActivity.this.updateTimeTable(groupId);
-            }
-        }
-    }
 }
