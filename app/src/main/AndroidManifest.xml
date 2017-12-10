@@ -30,6 +30,7 @@
             android:theme="@style/WhiteNoActionBar" />
 
         <receiver android:name=".notification.NotificationPublisher" />
+        <receiver android:name=".notification.RingerModePublisher"/>
 
         <activity
             android:name=".activity.RoutineActivity"
@@ -81,6 +82,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
 
         <meta-data
             android:name="io.fabric.ApiKey"

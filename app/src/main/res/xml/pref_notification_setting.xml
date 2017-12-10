@@ -15,6 +15,7 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="class_notification_vibrate"
+            android:dependency="class_notifications"
             android:summary="Vibrate when notification pops up"
             android:title="Vibrate" />
 
@@ -29,13 +30,15 @@
     <PreferenceCategory android:title="Notification before class starts">
 
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
+            android:dependency="class_notifications"
             android:key="before_class_starts_notification"
             android:title="Show notification before class starts" />
 
         <EditTextPreference
             android:defaultValue="0"
             android:inputType="number"
+            android:dependency="before_class_starts_notification"
             android:key="before_class_starts_notification_minutes"
             android:maxLines="1"
             android:selectAllOnFocus="true"
@@ -43,13 +46,22 @@
             android:summary="Set minute to show notification before class starts "
             android:title="Minutes before class" />
 
+         <SwitchPreference
+            android:defaultValue="false"
+            android:title="Vibrate before class starts"
+            android:dependency="before_class_starts_notification"
+            android:key="before_class_starts_notification_vibrate" />
+
+
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Notification before class ends">
 
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:title="Show notification before class ends"
+            android:dependency="class_notifications"
             android:key="before_class_ends_notification" />
 
         <EditTextPreference
@@ -58,9 +70,15 @@
             android:key="before_class_ends_notification_minutes"
             android:maxLines="1"
             android:selectAllOnFocus="true"
+            android:dependency="before_class_ends_notification"
             android:singleLine="true"
             android:summary="Set minute to show notification before class ends "
             android:title="Minutes before class ends" />
+          <SwitchPreference
+            android:defaultValue="false"
+            android:title="Vibrate before class ends"
+            android:dependency="before_class_ends_notification"
+            android:key="before_class_ends_notification_vibrate" />
 
     </PreferenceCategory>
 

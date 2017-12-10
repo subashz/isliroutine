@@ -1,5 +1,6 @@
 package tk.blankstudio.isliroutine.notification;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -61,7 +62,7 @@ public class NotificationService extends Service {
         int groupId = Integer.parseInt(PreferenceUtils.get(this).getDefaultGroupYear());
         List<IEvent> ivents = DataLab.get(this).getEvents(dayOfTheWeek, groupId);
         for (IEvent event : ivents) {
-            scheduleNotification(this, (ClassModel) event);
+            scheduleNotificationAndRingerMode(this, (ClassModel) event);
         }
 
         RoutineWidgetProvider.updateRoutineWidget(this);
@@ -77,11 +78,13 @@ public class NotificationService extends Service {
      * @param choice  whether to set daily repeating notification or not
      */
     public static void setDailyRepeatingNotification(Context context, boolean choice) {
+        Log.d(TAG, "setDailyRepeatingNotification: called");
         Intent intent = new Intent(context, NotificationReceiver.class);
         intent.setAction("repeat");
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 2);
         cal.set(Calendar.MINUTE, 0);
+        Log.d(TAG, "setDailyRepeatingNotification: not null");
         if (choice) {
             AlarmUtils.addRepeatingAlarm(context, intent, REQ_CODE_SET_DAILY_REPEATING, cal);
         } else {
@@ -96,27 +99,13 @@ public class NotificationService extends Service {
      * @param context    Context
      * @param classModel Classmodel
      */
-    public void scheduleNotification(Context context, ClassModel classModel) {
+    public void scheduleNotificationAndRingerMode(Context context, ClassModel classModel) {
 
         int startHour = classModel.getStartTime().get(Calendar.HOUR_OF_DAY);
         int startMinute = classModel.getStartTime().get(Calendar.MINUTE);
         int endMinute = classModel.getEndTime().get(Calendar.MINUTE);
         int endHour = classModel.getEndTime().get(Calendar.HOUR_OF_DAY);
         int uId = (int) classModel.getId();
-
-        Intent startClassIntent = new Intent(context, NotificationPublisher.class);
-        startClassIntent.putExtra(NotificationPublisher.UID, uId);
-        startClassIntent.putExtra(NotificationPublisher.START_HOUR, startHour);
-        startClassIntent.putExtra(NotificationPublisher.START_MINUTE, startMinute);
-        startClassIntent.putExtra(NotificationPublisher.COURSE_NAME, classModel.getCourseName());
-        startClassIntent.putExtra(NotificationPublisher.CLASS_STATUS, NotificationPublisher.CLASS_STARTING);
-
-        Intent endClassIntent = new Intent(context, NotificationPublisher.class);
-        endClassIntent.putExtra(NotificationPublisher.UID, uId);
-        endClassIntent.putExtra(NotificationPublisher.CLASS_STATUS, NotificationPublisher.CLASS_ENDING);
-        endClassIntent.putExtra(NotificationPublisher.END_HOUR, endHour);
-        endClassIntent.putExtra(NotificationPublisher.COURSE_NAME, classModel.getCourseName());
-        endClassIntent.putExtra(NotificationPublisher.END_MINUTE, endMinute);
 
         Calendar startCal = Calendar.getInstance();
         startCal.set(Calendar.HOUR_OF_DAY, startHour);
@@ -128,32 +117,65 @@ public class NotificationService extends Service {
         endCal.set(Calendar.MINUTE, endMinute);
         endCal.set(Calendar.SECOND, 0);
 
-        if (PreferenceUtils.get(context).getBeforeClassEndsNotification()) {
+
+        // ringing mode configuration
+        Intent startAlarmModeIntent = new Intent(context,RingerModePublisher.class);
+        startAlarmModeIntent.putExtra(NotificationPublisher.UID, uId);
+        startAlarmModeIntent.putExtra(NotificationPublisher.START_HOUR, startHour);
+        startAlarmModeIntent.putExtra(NotificationPublisher.START_MINUTE, startMinute);
+        startAlarmModeIntent.putExtra(NotificationPublisher.CLASS_STATUS, NotificationPublisher.CLASS_STARTING);
+
+        Intent endAlarmModeIntent = new Intent(context,RingerModePublisher.class);
+        endAlarmModeIntent.putExtra(NotificationPublisher.UID, uId);
+        endAlarmModeIntent.putExtra(NotificationPublisher.END_HOUR, endHour);
+        endAlarmModeIntent.putExtra(NotificationPublisher.END_MINUTE, endMinute);
+        endAlarmModeIntent.putExtra(NotificationPublisher.CLASS_STATUS, NotificationPublisher.CLASS_ENDING);
+
+
+        AlarmUtils.addAlarm(context, endAlarmModeIntent, (uId + endHour) * endHour, endCal);
+        AlarmUtils.addAlarm(context, startAlarmModeIntent, (uId + startHour) * startHour, startCal);
+        Log.d(TAG, "Set alarm ringer mode at: sh:" + startCal.get(Calendar.HOUR_OF_DAY) + " sm:" + startCal.get(Calendar.MINUTE) + " eh:" + endCal.get(Calendar.HOUR_OF_DAY) + " em:" + endCal.get(Calendar.MINUTE));
+
+
+       // notifications
+        if (PreferenceUtils.get(context).getClassNotificationReminder() && PreferenceUtils.get(context).getBeforeClassEndsNotification()) {
             // reduce minutes
-            int startOffsetMinute = Integer.parseInt(PreferenceUtils.get(context).getBeforeClassEndsNotificationMinutes());
-            endCal.add(Calendar.MINUTE, -(startOffsetMinute));
-//            if (startOffsetMinute <= endMinute) {
-//                endCal.set(Calendar.MINUTE, endMinute - startOffsetMinute);
-//            } else {
-//                if (startOffsetMinute <= 60) {
-//                    endCal.set(Calendar.MINUTE, 60 - startOffsetMinute);
-//                    endCal.set(Calendar.HOUR_OF_DAY, endHour - 1);
-//                } else {
-//                    int hour = startOffsetMinute / 60;
-//                    int minute = startOffsetMinute % 60;
-//                    endCal.set(Calendar.MINUTE, 60 - minute);
-//                    endCal.set(Calendar.HOUR_OF_DAY, endHour - hour);
-//                }
-//            }
+            int endOffsetMinute = Integer.parseInt(PreferenceUtils.get(context).getBeforeClassEndsNotificationMinutes());
+            endCal.add(Calendar.MINUTE, -(endOffsetMinute));
         }
-        if (PreferenceUtils.get(context).getBeforeClassStartsNotification()) {
+        if (PreferenceUtils.get(context).getClassNotificationReminder() && PreferenceUtils.get(context).getBeforeClassStartsNotification()) {
             int startOffsetMinute = Integer.parseInt(PreferenceUtils.get(context).getBeforeClassStartsNotificationMinutes());
             startCal.add(Calendar.MINUTE, -(startOffsetMinute));
         }
 
+        Intent startClassIntent = new Intent(context, NotificationPublisher.class);
+        startClassIntent.putExtra(NotificationPublisher.UID, uId);
+        startClassIntent.putExtra(NotificationPublisher.START_HOUR, startCal.get(Calendar.HOUR_OF_DAY));
+        startClassIntent.putExtra(NotificationPublisher.START_MINUTE, startCal.get(Calendar.MINUTE));
+        startClassIntent.putExtra(NotificationPublisher.COURSE_NAME, classModel.getCourseName());
+        startClassIntent.putExtra(NotificationPublisher.CLASS_STATUS, NotificationPublisher.CLASS_STARTING);
+
+        Intent endClassIntent = new Intent(context, NotificationPublisher.class);
+        endClassIntent.putExtra(NotificationPublisher.UID, uId);
+        endClassIntent.putExtra(NotificationPublisher.CLASS_STATUS, NotificationPublisher.CLASS_ENDING);
+        endClassIntent.putExtra(NotificationPublisher.END_HOUR, endCal.get(Calendar.HOUR_OF_DAY));
+        endClassIntent.putExtra(NotificationPublisher.COURSE_NAME, classModel.getCourseName());
+        endClassIntent.putExtra(NotificationPublisher.END_MINUTE, endCal.get(Calendar.MINUTE));
+
         AlarmUtils.addAlarm(context, endClassIntent, (uId + endHour) * endHour, endCal);
         AlarmUtils.addAlarm(context, startClassIntent, (uId + startHour) * startHour, startCal);
-        Log.d("NotificationHandler", "Set Alarm at Time at: sh:" + startCal.get(Calendar.HOUR_OF_DAY) + " sm:" + startCal.get(Calendar.MINUTE) + " eh:" + endCal.get(Calendar.HOUR_OF_DAY) + " em:" + endCal.get(Calendar.MINUTE));
+
+        Log.d(TAG, "Set Alarm notification mode at: sh:" + startCal.get(Calendar.HOUR_OF_DAY) + " sm:" + startCal.get(Calendar.MINUTE) + " eh:" + endCal.get(Calendar.HOUR_OF_DAY) + " em:" + endCal.get(Calendar.MINUTE));
+    }
+
+    public Intent createIntent(Context context, Class <?> cls,int uId,String courseName,String classStatus,String hourType, String minuteType, int hour,int minute) {
+        Intent i = new Intent(context,cls);
+        i.putExtra(NotificationPublisher.UID,uId);
+        i.putExtra(NotificationPublisher.CLASS_STATUS,classStatus);
+        i.putExtra(hourType,hour);
+        i.putExtra(minuteType,minute);
+        i.putExtra(NotificationPublisher.COURSE_NAME,courseName);
+        return i;
     }
 
 

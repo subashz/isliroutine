@@ -78,7 +78,6 @@ public class RoutineActivity extends AppCompatActivity {
     TabLayout tabLayout;
     MyBroadCastReceiver updateTimeTableReceiver;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,7 +115,6 @@ public class RoutineActivity extends AppCompatActivity {
         } else {
             init();
         }
-
     }
 
     private void downloadTimeTable(final int groupIndex) {
@@ -171,7 +169,6 @@ public class RoutineActivity extends AppCompatActivity {
                     YearGroupUtils.saveGroupId(RoutineActivity.this, groupIndex);
                     init();
                 }
-
             }
 
 
@@ -389,7 +386,6 @@ public class RoutineActivity extends AppCompatActivity {
         public int getCount() {
             return mFragmentList.size();
         }
-
 
         @Override
         public CharSequence getPageTitle(int position) {

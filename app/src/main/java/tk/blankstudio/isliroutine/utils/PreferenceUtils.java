@@ -28,6 +28,8 @@ public class PreferenceUtils {
     public static final String BEFORE_CLASS_STARTS_NOTIFICATION = "before_class_starts_notification";
     public static final String BEFORE_CLASS_ENDS_NOTIFICATION_MINUTES = "before_class_ends_notification_minutes";
     public static final String BEFORE_CLASS_ENDS_NOTIFICATION = "before_class_ends_notification";
+    public static final String BEFORE_CLASS_STARTS_NOTIFICATION_VIBRATE="before_class_starts_notification_vibrate";
+    public static final String BEFORE_CLASS_ENDS_NOTIFICATION_VIBRATE="before_class_ends_notification_vibrate";
 
     public static final String USER_ACCOUNT = "user_account";
 
@@ -112,13 +114,6 @@ public class PreferenceUtils {
         return mPreferences.getBoolean(BEFORE_CLASS_ENDS_NOTIFICATION, false);
     }
 
-    public void setBeforeClassEndsNotification(boolean status) {
-        mPreferences.edit().putBoolean(BEFORE_CLASS_ENDS_NOTIFICATION, status);
-    }
-
-    public void setBeforeClassStartsNotification(boolean status) {
-        mPreferences.edit().putBoolean(BEFORE_CLASS_STARTS_NOTIFICATION, status);
-    }
 
     public String getBeforeClassEndsNotificationMinutes() {
         return mPreferences.getString(BEFORE_CLASS_ENDS_NOTIFICATION_MINUTES, "0");
@@ -128,13 +123,14 @@ public class PreferenceUtils {
         return mPreferences.getString(BEFORE_CLASS_STARTS_NOTIFICATION_MINUTES, "0");
     }
 
-    public void setBeforeClassStartsNotificationMinutes(String value) {
-        mPreferences.edit().putString(BEFORE_CLASS_STARTS_NOTIFICATION_MINUTES, value);
+    public boolean getBeforeClassStartsNotificationVibrate() {
+        return mPreferences.getBoolean(BEFORE_CLASS_STARTS_NOTIFICATION_VIBRATE,false);
     }
 
-    public void setBeforeClassEndsNotificationMinutes(String value) {
-        mPreferences.edit().putString(BEFORE_CLASS_ENDS_NOTIFICATION_MINUTES, value);
+    public boolean getBeforeClassEndsNotificationVibrate() {
+        return mPreferences.getBoolean(BEFORE_CLASS_ENDS_NOTIFICATION_VIBRATE,false);
     }
+
 
 
 }

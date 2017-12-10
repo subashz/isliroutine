@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import org.json.JSONArray;
 
@@ -23,23 +24,37 @@ import tk.blankstudio.isliroutine.notification.NotificationService;
 
 public class AlarmUtils {
 
+    public static final String TAG = AlarmUtils.class.getSimpleName();
+
     public static void addAlarm(Context context, Intent intent, int requestCode, Calendar calendar) {
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_NO_CREATE);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        // this is done because FLAG_NO_CREATE returns null if there is no pending intent of request code
+        // so if pending intent doesnot exist, then we need to create the new pending intent and
+        // also register the alarm
+        // if exist then don't do any thing.. :<
+
+        if (pendingIntent == null) {
+            pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Log.d(TAG, "addAlarm: on alarm previously does not exist so creating new one");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            }
+            Log.d(TAG, "Notification addAlarm: to alarm manager: " + requestCode);
+            saveAlarmId(context, requestCode);
         } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            Log.d(TAG, "addAlarm: alarm previously exist already");
         }
 
-        saveAlarmId(context, requestCode);
     }
 
-     public static void addRepeatingAlarm(Context context, Intent intent, int requestCode, Calendar calendar) {
+    public static void addRepeatingAlarm(Context context, Intent intent, int requestCode, Calendar calendar) {
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -56,16 +71,26 @@ public class AlarmUtils {
         removeAlarmId(context, notificationId);
     }
 
+    public static PendingIntent findAlarm(Context context, Intent intent, int notificationId) {
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationId, intent, PendingIntent.FLAG_NO_CREATE);
+        if (pendingIntent != null) {
+            Log.d(TAG, "findAlarm: not equals to null");
+        } else {
+            Log.d(TAG, "findAlarm: equals to null");
+        }
+        return pendingIntent;
+    }
+
     public static void cancelAllAlarms(Context context) {
         // for the normal notification setter intent
-        Intent intent1=new Intent(context, NotificationPublisher.class);
+        Intent intent1 = new Intent(context, NotificationPublisher.class);
         //for the daily repeating setting intent
         Intent intent2 = new Intent(context, NotificationReceiver.class);
         for (int idAlarm : getAlarmIds(context)) {
             // also remove the repeating daily scheduling alarm
-            if(idAlarm==NotificationService.REQ_CODE_SET_DAILY_REPEATING) {
-                cancelAlarm(context,intent2,idAlarm);
-            }else {
+            if (idAlarm == NotificationService.REQ_CODE_SET_DAILY_REPEATING) {
+                cancelAlarm(context, intent2, idAlarm);
+            } else {
                 cancelAlarm(context, intent1, idAlarm);
             }
         }

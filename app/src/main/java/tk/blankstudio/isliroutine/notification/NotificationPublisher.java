@@ -44,21 +44,15 @@ public class NotificationPublisher extends BroadcastReceiver {
         String courseName=intent.getStringExtra(COURSE_NAME);
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (notificationManager != null && notificationManager.isNotificationPolicyAccessGranted()) {
-                setRingerMode(context, type);
-            }
-        } else {
-            setRingerMode(context,type);
-        }
-
         Calendar cal = Calendar.getInstance();
         if (PreferenceUtils.get(context).getClassNotificationReminder() && notificationManager!=null) {
-            if (type.equals(CLASS_STARTING) && startHour == cal.get(Calendar.HOUR_OF_DAY) && startMinute <= cal.get(Calendar.MINUTE)) {
+            if (type.equals(CLASS_STARTING) && startHour == cal.get(Calendar.HOUR_OF_DAY) && startMinute <= cal.get(Calendar.MINUTE)
+                    && PreferenceUtils.get(context).getBeforeClassStartsNotification()) {
                 Notification notification = getNotification(context,type,courseName);
                 notificationManager.cancel(id);
                 notificationManager.notify(id, notification);
-            } else if (type.equals(CLASS_ENDING) && endHour == cal.get(Calendar.HOUR_OF_DAY) && endMinute <= cal.get(Calendar.MINUTE)) {
+            } else if (type.equals(CLASS_ENDING) && endHour == cal.get(Calendar.HOUR_OF_DAY) && endMinute <= cal.get(Calendar.MINUTE)
+                    && PreferenceUtils.get(context).getBeforeClassEndsNotification()) {
                 Notification notification = getNotification(context,type,courseName);
                 notificationManager.cancel(id);
                 notificationManager.notify(id, notification);
@@ -72,20 +66,6 @@ public class NotificationPublisher extends BroadcastReceiver {
             Log.d(TAG, "onReceive:Triggered Start Time at: sh:" + startHour + " sm:" + startMinute);
         } else if (type.equals(CLASS_ENDING)) {
             Log.d(TAG, "onReceive:Triggered End Time at: eh:" + endHour + " em:" + endMinute);
-        }
-    }
-
-    public void setRingerMode(Context context, String ringerMode) {
-        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        Log.d(TAG, "before audiomanager: "+ringerMode);
-        if(PreferenceUtils.get(context).getAutoSilentMode() && audioManager!=null) {
-            if (ringerMode.equals(CLASS_STARTING)) {
-                Log.d(TAG, "setRingerMode: "+ringerMode);
-                audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-            } else if (ringerMode.equals(CLASS_ENDING)) {
-                Log.d(TAG, "setRingerMode: "+ringerMode);
-                audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-            }
         }
     }
 
@@ -130,7 +110,14 @@ public class NotificationPublisher extends BroadcastReceiver {
         }
 
         if(PreferenceUtils.get(context).getNotificationVibrate()) {
-            builder.setVibrate(new long[]{1000, 1000});
+            Log.d(TAG, "getNotification: set vibration mode on class ends/starts notification");
+            if(type.equals(CLASS_STARTING) && PreferenceUtils.get(context).getBeforeClassStartsNotificationVibrate()) {
+                builder.setVibrate(new long[]{1000, 1000});
+                Log.d(TAG, "getNotification: before class start notification vibrate");
+            }else if(type.equals(CLASS_ENDING) && PreferenceUtils.get(context).getBeforeClassEndsNotificationVibrate()) {
+                Log.d(TAG, "getNotification: before class ends notification vibrate");
+                builder.setVibrate(new long[]{1000, 1000});
+            }
         }
         return builder.build();
     }

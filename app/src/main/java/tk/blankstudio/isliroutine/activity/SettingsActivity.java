@@ -2,20 +2,25 @@ package tk.blankstudio.isliroutine.activity;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Switch;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.PreferenceChangeListener;
 
 import tk.blankstudio.isliroutine.R;
 import tk.blankstudio.isliroutine.database.DataLab;
@@ -76,7 +81,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 i.putExtra("groupIndex",Integer.parseInt(newValue.toString()));
                 i.setAction("updateRoutineTimeTable");
                 getActivity().getApplicationContext().sendBroadcast(i);
-
             }
             return false;
         }
@@ -93,12 +97,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
-    public static class NotificationSettingFragment extends PreferenceFragment {
-        @Override
+    public static class NotificationSettingFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
+        SwitchPreference classNotification;
+
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setHasOptionsMenu(true);
             addPreferencesFromResource(R.xml.pref_notification_setting);
+            getActivity().setTheme(R.style.PreferenceStyle);
+            classNotification=(SwitchPreference)findPreference("class_notifications");
+
         }
 
         // go to previous menu
@@ -112,6 +120,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return super.onOptionsItemSelected(item);
         }
 
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            Log.d(TAG, "onSharedPreferenceChanged: key is: "+key);
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+        }
     }
 
     @Override

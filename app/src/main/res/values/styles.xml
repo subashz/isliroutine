@@ -30,6 +30,11 @@
         <item name="android:background">#ffffff</item>
     </style>
 
+    <style name="PreferenceStyle">
+        <item name="android:textColorPrimary">@color/preference_title_color</item>
+        <item name="android:textColorSecondary">@color/preference_title_color</item>
+    </style>
+
     <style name="WhiteNoActionBar" parent="Theme.AppCompat.Light.NoActionBar" >
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
